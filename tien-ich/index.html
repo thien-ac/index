@@ -71,6 +71,24 @@
             .main { padding: 15px; }
             .timer-display { font-size: 3.5rem; }
         }
+        #radical-card {
+    transition: all 0.3s ease;
+}
+
+#rad-char {
+    text-shadow: 2px 2px 10px rgba(37, 99, 235, 0.2);
+    font-family: "KaiTi", "STKaiti", serif; /* Font chữ thư pháp nếu có */
+}
+
+#quiz-options button:hover {
+    background: var(--primary) !important;
+    color: white !important;
+}
+
+@media (max-width: 768px) {
+    #rad-char { font-size: 4rem; }
+    #quiz-options { grid-template-columns: 1fr; }
+}
     </style>
 </head>
 <body>
@@ -93,6 +111,32 @@
             <button class="menu-btn" onclick="nav('flashcards', this)">📇 Flashcards</button>
 
             <span class="menu-label">Công cụ</span>
+            <button class="menu-btn" onclick="nav('radicals', this)">⛩️ Học Bộ Thủ</button>
+
+<section id="radicals" class="tool-card">
+    <h3>214 Bộ Thủ Tiếng Trung</h3>
+    <div id="quiz-container" style="display:none; background:#fffbe6; padding:15px; border-radius:15px; border:2px dashed #f59e0b; margin-bottom:15px;">
+        <p style="text-align:center; font-weight:bold;">Câu hỏi: <span id="quiz-q" style="font-size:2rem;"></span></p>
+        <div id="quiz-options" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+    </div>
+
+    <div id="radical-card" style="text-align:center; padding:30px; border:1px solid #eee; border-radius:20px; background:#fafafa;">
+        <div id="rad-char" style="font-size:5rem; color:var(--primary);">一</div>
+        <div id="rad-info" style="margin:15px 0;">
+            <b id="rad-viet" style="font-size:1.5rem;">Bộ Nhất</b><br>
+            <span id="rad-mean" style="color:#64748b;">Ý nghĩa: Số một</span>
+        </div>
+        <div id="rad-origin" style="font-style:italic; font-size:0.9rem; color:#ef4444; background:#fee2e2; padding:10px; border-radius:10px;">
+            Minh họa: Một đường kẻ ngang tượng trưng cho số 1 hoặc mặt đất.
+        </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:15px;">
+        <button onclick="prevRad()" style="background:#64748b;">Trước đó</button>
+        <button onclick="nextRad()">Tiếp theo</button>
+        <button onclick="startRadQuiz()" style="background:#22c55e;">Luyện tập (Quiz)</button>
+    </div>
+</section>
             <button class="menu-btn" onclick="nav('currency', this)">💱 Đổi tiền 2 chiều</button>
             <button class="menu-btn" onclick="nav('numToWord', this)">💰 Số thành Chữ</button>
             <button class="menu-btn" onclick="nav('calc', this)">🧮 Máy tính %</button>
@@ -303,6 +347,66 @@
             const f = document.getElementById('fcF').value, b = document.getElementById('fcB').value;
             if(f&&b){ fcs.push({f,b}); localStorage.setItem('m_fcs', JSON.stringify(fcs)); alert("Đã thêm!"); }
         }
+        // Dữ liệu bộ thủ (Mẫu một số bộ tiêu biểu)
+const radicalData = [
+    {char: "一", viet: "Nhất", mean: "Số một", origin: "Một vạch ngang chỉ số 1."},
+    {char: "丨", viet: "Cổn", mean: "Nét sổ", origin: "Đường thẳng đứng từ trên xuống."},
+    {char: "口", viet: "Khẩu", mean: "Cái miệng", origin: "Hình vuông giống khoang miệng đang mở."},
+    {char: "人", viet: "Nhân", mean: "Con người", origin: "Hình người đang đứng thẳng bước đi."},
+    {char: "木", viet: "Mộc", mean: "Cây cối", origin: "Thân cây có tán và rễ."},
+    {char: "水", viet: "Thủy", mean: "Nước", origin: "Dòng nước đang chảy (biến thể 氵)."},
+    {char: "火", viet: "Hỏa", mean: "Lửa", origin: "Ngọn lửa bùng cháy (biến thể 灬)."},
+    {char: "土", viet: "Thổ", mean: "Đất", origin: "Cây mọc trên mặt đất."},
+    {char: "女", viet: "Nữ", mean: "Phụ nữ", origin: "Người phụ nữ đang quỳ gối duyên dáng."},
+    {char: "子", viet: "Tử", mean: "Con cái", origin: "Đứa bé đang dang tay quấn tã."}
+];
+
+let curRadIdx = 0;
+
+// Hiển thị bộ thủ
+function renderRadical() {
+    const r = radicalData[curRadIdx];
+    document.getElementById('rad-char').innerText = r.char;
+    document.getElementById('rad-viet').innerText = `Bộ ${r.viet}`;
+    document.getElementById('rad-mean').innerText = `Ý nghĩa: ${r.mean}`;
+    document.getElementById('rad-origin').innerText = `Minh họa: ${r.origin}`;
+}
+
+function nextRad() { curRadIdx = (curRadIdx + 1) % radicalData.length; renderRadical(); }
+function prevRad() { curRadIdx = (curRadIdx - 1 + radicalData.length) % radicalData.length; renderRadical(); }
+
+// Chức năng Quiz
+function startRadQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.style.display = 'block';
+    
+    const correct = radicalData[Math.floor(Math.random() * radicalData.length)];
+    document.getElementById('quiz-q').innerText = correct.char;
+    
+    let options = [correct.mean];
+    while(options.length < 4) {
+        let randMean = radicalData[Math.floor(Math.random() * radicalData.length)].mean;
+        if(!options.includes(randMean)) options.push(randMean);
+    }
+    options.sort(() => Math.random() - 0.5);
+
+    const optDiv = document.getElementById('quiz-options');
+    optDiv.innerHTML = options.map(opt => `
+        <button onclick="checkRadAns('${opt}', '${correct.mean}')" style="background:white; color:var(--text); border:1px solid #ddd; font-size:0.9rem;">${opt}</button>
+    `).join('');
+}
+
+function checkRadAns(selected, correct) {
+    if(selected === correct) {
+        alert("Chính xác! 🧧");
+        startRadQuiz();
+    } else {
+        alert(`Sai rồi, đáp án là: ${correct}`);
+    }
+}
+
+// Khởi tạo mặc định
+renderRadical();
     </script>
 </body>
 </html>
