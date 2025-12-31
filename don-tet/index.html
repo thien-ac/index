@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Chúc mừng năm mới 2026 – Happy New Year 2026" />
+  <meta name="theme-color" content="#0b1023" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Chúc Mừng Năm Mới 2026</title>
+  <style>
+    :root{
+      --bg1:#0b1023; --bg2:#1f2858; --accent:#ffd85c; --pink:#ff7ac6; --blue:#71c7ff; --green:#6ef3a9;
+      --card-bg:rgba(255,255,255,.09); --card-border:rgba(255,255,255,.16);
+      --text:#f7f7fb;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+      /* Nền Tết Việt: ảnh phủ + gradient */
+      background:
+        linear-gradient(160deg, rgba(11,16,35,.85), rgba(13,15,26,.75) 60%),
+        url("images/tet-bg.jpg") center/cover fixed no-repeat;
+      min-height:100svh; overflow:hidden;
+    }
+    /* Hoa văn nhẹ phía trên ảnh */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:0;
+      background-image:
+        radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size:20px 20px, 32px 32px;
+      background-position:0 0, 12px 16px;
+      pointer-events:none;
+    }
+
+    .wrap{position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:20px; padding:24px}
+    header{text-align:center; margin-top:6svh; animation:fadeIn 1.2s ease both}
+    @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+
+    .brand{
+      display:inline-block; padding:.4rem .8rem; border:1px solid var(--card-border);
+      border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      backdrop-filter: blur(6px);
+      font-weight:600; letter-spacing:.4px;
+    }
+
+    .title{
+      font-size:clamp(2rem,6vw,4.5rem); font-weight:800; margin:.3rem 0 .5rem;
+      line-height:1.05; letter-spacing:1px; text-transform:uppercase; text-align:center;
+      color:#fff;
+      text-shadow:
+        0 0 10px rgba(255,216,92,.6),
+        0 0 30px rgba(255,122,198,.4),
+        0 0 60px rgba(113,199,255,.25);
+    }
+    .title .year{
+      display:inline-block; padding:0 .25em;
+      background:linear-gradient(90deg, var(--accent), var(--pink), var(--blue));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      filter:drop-shadow(0 0 8px rgba(255,216,92,.5));
+    }
+
+    .subtitle{font-size:clamp(1rem,2.4vw,1.25rem); opacity:.9}
+
+    /* Card chung */
+    .card{
+      width:min(880px, 92vw);
+      border:1px solid var(--card-border);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border-radius:18px; padding:18px; backdrop-filter: blur(8px);
+      box-shadow:0 12px 40px rgba(0,0,0,.35);
+    }
+
+    /* Đếm ngược */
+    .countdown{
+      display:grid; grid-template-columns: repeat(4, minmax(70px, 1fr)); gap:12px;
+      align-items:center; justify-items:center; margin:10px auto 0;
+    }
+    .timebox{
+      width:100%; text-align:center; padding:14px 10px; border-radius:14px;
+      background:rgba(12,14,26,.6); border:1px solid rgba(255,255,255,.12);
+      position:relative; overflow:hidden;
+    }
+    .timebox::after{
+      content:""; position:absolute; inset:auto 0 -2px 0; height:3px;
+      background:linear-gradient(90deg, var(--accent), var(--pink), var(--blue));
+      opacity:.8;
+    }
+    .num{font-size:clamp(1.6rem,5vw,2.4rem); font-weight:800; letter-spacing:1px}
+    .label{font-size:.9rem; opacity:.75; margin-top:4px}
+
+    /* Lời chúc trong khu đếm ngược */
+    .greet{margin-top:18px; display:grid; grid-template-columns:1fr; gap:16px}
+    .greet .message{
+      border:1px solid var(--card-border);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius:14px; padding:16px;
+    }
+    .message h3{margin:0 0 8px; font-size:1.2rem}
+    .message p{margin:.25rem 0; line-height:1.6}
+
+    .controls{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:6px}
+    button, .share{
+      cursor:pointer; border:1px solid var(--card-border);
+      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      color:var(--text); border-radius:999px; padding:.6rem 1rem; font-weight:600;
+      transition:.2s ease; backdrop-filter: blur(6px); text-decoration:none;
+    }
+    button:hover, .share:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.25)}
+    .note{font-size:.9rem; opacity:.75; text-align:center; margin-top:8px}
+
+    /* Canvas pháo hoa ở nền */
+    #fireworks{position:fixed; inset:0; z-index:1; background:transparent}
+
+    /* Thiệp chúc mừng khi hết giờ */
+    #greetingCard{display:none}
+    #greetingCard.active{display:block; animation:fadeIn .8s ease both}
+    .greeting-content{ text-align:center; padding:24px 12px; }
+    .greeting-title{
+      font-size:clamp(2.2rem,6.4vw,4.6rem); font-weight:900; margin:.2rem 0 .6rem;
+      background:linear-gradient(90deg, var(--accent), var(--pink), var(--blue));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 0 24px rgba(255,216,92,.35);
+    }
+    .greeting-text{
+      font-size:clamp(1.05rem,2.6vw,1.4rem); line-height:1.7;
+      opacity:.95; margin:0 auto; max-width:52ch;
+    }
+
+    footer{margin:18px 0 26px; opacity:.8; text-align:center; font-size:.95rem}
+    footer .copy{font-variant-numeric:tabular-nums}
+
+    @media (max-width:560px){ .countdown{grid-template-columns:repeat(2,1fr)} }
+  </style>
+</head>
+<body>
+  <canvas id="fireworks" aria-hidden="true"></canvas>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">🎉 Chúc Mừng Năm Mới</div>
+      <h1 class="title">Happy New Year <span class="year">2026</span></h1>
+      <p class="subtitle">Chúc bạn và gia đình một năm mới an khang, thịnh vượng, tràn đầy niềm vui!</p>
+    </header>
+
+    <!-- KHU ĐẾM NGƯỢC -->
+    <section id="countdownCard" class="card" aria-label="Đếm ngược giao thừa">
+      <div class="countdown" id="countdown">
+        <div class="timebox"><div class="num" id="days">—</div><div class="label">Ngày</div></div>
+        <div class="timebox"><div class="num" id="hours">—</div><div class="label">Giờ</div></div>
+        <div class="timebox"><div class="num" id="mins">—</div><div class="label">Phút</div></div>
+        <div class="timebox"><div class="num" id="secs">—</div><div class="label">Giây</div></div>
+      </div>
+
+      <div class="greet">
+        <div class="message">
+          <h3>🌟 Lời chúc năm mới</h3>
+          <p id="wish">
+            Năm 2026 chúc bạn sức khỏe dồi dào, công việc thuận lợi, gia đình hạnh phúc,
+            mọi điều như ý và tràn đầy cảm hứng!
+          </p>
+        </div>
+
+        <div class="controls">
+          <button id="randomWish">💌 Đổi lời chúc</button>
+          <button id="toggleMusic">🎵 Bật nhạc nền</button>
+          <a href="#" id="shareBtn" class="share">🔗 Chia sẻ lời chúc</a>
+          <button id="installBtn" hidden>📲 Cài ứng dụng</button>
+        </div>
+        <p class="note">*Nhạc không tự phát để tránh bị trình duyệt chặn — hãy bấm nút để nghe.</p>
+      </div>
+    </section>
+
+    <!-- THIỆP CHÚC MỪNG SAU KHI HẾT GIỜ -->
+    <section id="greetingCard" class="card" aria-label="Thiệp chúc mừng">
+      <div class="greeting-content">
+        <div style="display:inline-block; padding:.4rem .8rem; border:1px solid var(--card-border);
+          border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); backdrop-filter:blur(6px); font-weight:600; letter-spacing:.4px;">
+          ✨ Giao Thừa Đã Đến
+        </div>
+        <h2 class="greeting-title">Chúc Mừng Năm Mới 2026</h2>
+        <p class="greeting-text" id="greetingText">
+          ✨ Chào 2026! Chúc bạn năm mới đại thắng, vạn sự như ý, sức khỏe dồi dào, gia đình hạnh phúc
+          và mọi kế hoạch đều thành công rực rỡ!
+        </p>
+        <div class="controls" style="margin-top:14px">
+          <button id="replayFireworks">🎇 Bùng nổ pháo hoa</button>
+          <a href="#" id="shareBtn2" class="share">🔗 Chia sẻ thiệp</a>
+          <button id="backToCountdown">↩️ Xem lại đếm ngược</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="copy">© 2026 | Thiết kế bởi hopthurac với tình yêu & pháo hoa ✨</div>
+    </footer>
+  </div>
+
+  <script>
+    /* ====== Countdown đến 00:00:00 01/01/2026 (theo local time) ====== */
+    const target = new Date("2026-01-01T00:00:00");
+    const el = {
+      days: document.getElementById("days"),
+      hours: document.getElementById("hours"),
+      mins: document.getElementById("mins"),
+      secs: document.getElementById("secs")
+    };
+    const countdownCard = document.getElementById("countdownCard");
+    const greetingCard = document.getElementById("greetingCard");
+    let countdownDone = false;
+    function format2(n){ return String(n).padStart(2,"0"); }
+
+    function switchToGreeting(){
+      countdownCard.style.display = "none";
+      greetingCard.classList.add("active");
+      // cập nhật nội dung lời chúc sang thiệp
+      const wishEl = document.getElementById("wish");
+      const greetingText = document.getElementById("greetingText");
+      if(wishEl && wishEl.textContent) greetingText.textContent = wishEl.textContent;
+      celebrate();
+    }
+    function switchToCountdown(){
+      greetingCard.classList.remove("active");
+      countdownCard.style.display = "";
+    }
+
+    function tick(){
+      const now = new Date();
+      const diff = target - now;
+      if(diff <= 0){
+        el.days.textContent = "00";
+        el.hours.textContent = "00";
+        el.mins.textContent = "00";
+        el.secs.textContent = "00";
+        if(!countdownDone){
+          countdownDone = true;
+          switchToGreeting();
+        }
+        return;
+      }
+      const s = Math.floor(diff/1000);
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      el.days.textContent = format2(d);
+      el.hours.textContent = format2(h);
+      el.mins.textContent = format2(m);
+      el.secs.textContent = format2(sec);
+    }
+    setInterval(tick, 250); tick();
+
+    /* ====== Random lời chúc ====== */
+    const wishes = [
+      "Chúc năm mới 2026 rực rỡ – sức khỏe dồi dào, vạn sự hanh thông!",
+      "Mở ra chương mới: bình an, thịnh vượng và muôn điều tốt đẹp.",
+      "Thành công gõ cửa, hạnh phúc ngập tràn, niềm vui luôn bên bạn.",
+      "Mỗi ngày là một niềm vui, mỗi bước là một thành tựu!",
+      "Tài lộc dồi dào, tình thân bền chặt, nụ cười luôn nở trên môi."
+    ];
+    const wishEl = document.getElementById("wish");
+    document.getElementById("randomWish").addEventListener("click", ()=>{
+      const i = Math.floor(Math.random()*wishes.length);
+      wishEl.textContent = wishes[i];
+    });
+
+    /* ====== Nhạc nền ====== */
+    let audio; let playing = false;
+    const musicBtn = document.getElementById("toggleMusic");
+    musicBtn.addEventListener("click", async ()=>{
+      try{
+        if(!audio){
+          audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5e6e8c1b5b.mp3?filename=new-year-109199.mp3");
+          audio.loop = true; audio.volume = 0.4;
+        }
+        if(!playing){ await audio.play(); playing = true; musicBtn.textContent = "⏸️ Tắt nhạc nền"; }
+        else{ audio.pause(); playing = false; musicBtn.textContent = "🎵 Bật nhạc nền"; }
+      }catch(e){ alert("Trình duyệt đã chặn tự phát. Hãy bấm lại để phát nhạc."); }
+    });
+
+    /* ====== Chia sẻ ====== */
+    function doShare(text){
+      const shareData = { title:"Chúc Mừng Năm Mới 2026", text, url:location.href };
+      if(navigator.share){
+        navigator.share(shareData).catch(()=>{});
+      }else{
+        navigator.clipboard.writeText(`${text} ${location.href}`);
+        alert("✅ Đã sao chép nội dung chia sẻ!");
+      }
+    }
+    document.getElementById("shareBtn").addEventListener("click", (e)=>{
+      e.preventDefault();
+      doShare(wishEl.textContent + " #HappyNewYear2026");
+    });
+    document.getElementById("shareBtn2").addEventListener("click", (e)=>{
+      e.preventDefault();
+      const greetingText = document.getElementById("greetingText").textContent;
+      doShare(greetingText + " #HappyNewYear2026");
+    });
+
+    /* ====== Bật lại pháo hoa / quay lại đếm ngược ====== */
+    document.getElementById("replayFireworks").addEventListener("click", ()=>{
+      for(let i=0;i<8;i++) fireworks.push(new Firework());
+    });
+    document.getElementById("backToCountdown").addEventListener("click", ()=>{
+      switchToCountdown();
+    });
+
+    /* ====== Pháo hoa Canvas ====== */
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    let W = innerWidth, H = innerHeight;
+    const DPR = Math.min(2, devicePixelRatio || 1);
+    function resize(){
+      W = innerWidth; H = innerHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      canvas.style.width = W+"px"; canvas.style.height = H+"px";
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+    addEventListener("resize", resize); resize();
+
+    const rand = (min,max)=> Math.random()*(max-min)+min;
+    const hueRand = ()=> [rand(0,60), rand(180,240), rand(300,360)][Math.floor(Math.random()*3)];
+
+    class Particle{
+      constructor(x,y,color){
+        this.x=x; this.y=y; this.vx=rand(-3,3); this.vy=rand(-3,3)-1;
+        this.alpha=1; this.size=rand(1,3); this.color=color;
+        this.gravity=0.03; this.friction=0.985;
+      }
+      step(){
+        this.vx*=this.friction; this.vy=this.vy*this.friction+this.gravity;
+        this.x+=this.vx; this.y+=this.vy; this.alpha-=0.012;
+      }
+      draw(){
+        ctx.globalAlpha = Math.max(this.alpha,0);
+        ctx.fillStyle = this.color;
+        ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    class Firework{
+      constructor(){
+        this.x = rand(W*0.1, W*0.9);
+        this.y = rand(H*0.2, H*0.6);
+        this.particles = [];
+        const hue = hueRand();
+        const color = `hsla(${hue}, 100%, 65%, 1)`;
+        for(let i=0;i<120;i++){
+          this.particles.push(new Particle(this.x,this.y,color));
+        }
+        this.life = 90;
+      }
+      step(){ this.particles.forEach(p=>p.step()); this.life--; }
+      draw(){ this.particles.forEach(p=>p.draw()); }
+      done(){ return this.life<=0 || this.particles.every(p=>p.alpha<=0); }
+    }
+
+    const fireworks = [];
+    function loop(){
+      ctx.clearRect(0,0,W,H);
+      const g = ctx.createRadialGradient(W/2,H/2,0, W/2,H/2, Math.max(W,H)/2);
+      g.addColorStop(0,"rgba(255,255,255,.02)");
+      g.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+      if(Math.random()<0.06) fireworks.push(new Firework());
+      for(let i=fireworks.length-1;i>=0;i--){
+        const fw = fireworks[i];
+        fw.step(); fw.draw();
+        if(fw.done()) fireworks.splice(i,1);
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    /* ====== Hiệu ứng khi hết giờ ====== */
+    function celebrate(){
+      let t = 0;
+      const burst = setInterval(()=>{
+        for(let i=0;i<4;i++) fireworks.push(new Firework());
+        if(++t>12) clearInterval(burst);
+      }, 200);
+      const title = document.querySelector(".title");
+      title.style.transition = "filter .3s ease";
+      let k=0;
+      const flash = setInterval(()=>{
+        title.style.filter = (k%2===0) ? "drop-shadow(0 0 18px rgba(255,216,92,.9))" : "none";
+        k++; if(k>8){ clearInterval(flash); title.style.filter=""; }
+      }, 180);
+    }
+
+    /* ====== PWA ====== */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
+    let deferredPrompt;
+    const installBtn = document.getElementById("installBtn");
+    window.addEventListener('beforeinstallprompt', (e)=>{
+      e.preventDefault(); deferredPrompt = e; installBtn.hidden = false;
+    });
+    installBtn.addEventListener('click', async ()=>{
+      if(!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice; deferredPrompt = null; installBtn.hidden = true;
+    });
+  </script>
+</body>
+</html>
