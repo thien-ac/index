@@ -2,239 +2,259 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office Ultimate Hub - Công cụ Văn phòng Đa năng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Office Hub Pro - Mobile Friendly</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --sidebar: #1e293b;
             --text: #334155;
-            --success: #22c55e;
-            --danger: #ef4444;
+            --white: #ffffff;
         }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { display: flex; margin: 0; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
-        
-        /* Sidebar */
-        .sidebar { width: 260px; background: var(--sidebar); color: white; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
-        .sidebar h2 { font-size: 1.1rem; margin-bottom: 25px; color: #60a5fa; text-align: center; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        .menu-group { margin-bottom: 15px; }
-        .menu-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; margin-bottom: 8px; padding-left: 10px; display: block; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* Header cho Mobile */
+        .mobile-header {
+            display: none; background: var(--sidebar); color: white;
+            padding: 15px; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        /* Sidebar - Trên Desktop hiện bên trái, trên Mobile là menu trượt */
+        .container { display: flex; flex: 1; overflow: hidden; position: relative; }
+        .sidebar { 
+            width: 280px; background: var(--sidebar); color: white; padding: 20px; 
+            display: flex; flex-direction: column; overflow-y: auto; transition: transform 0.3s ease;
+        }
+        .sidebar h2 { font-size: 1.2rem; color: #60a5fa; text-align: center; margin-bottom: 20px; }
+        .menu-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin: 15px 0 5px 10px; }
         .menu-btn { 
-            width: 100%; background: none; border: none; color: #94a3b8; padding: 10px 15px; text-align: left; 
-            cursor: pointer; font-size: 0.9rem; border-radius: 8px; margin-bottom: 2px; transition: 0.2s;
+            width: 100%; background: none; border: none; color: #94a3b8; padding: 12px 15px; 
+            text-align: left; cursor: pointer; font-size: 1rem; border-radius: 10px; transition: 0.2s;
+            display: flex; align-items: center; gap: 10px;
         }
-        .menu-btn:hover, .menu-btn.active { background: #334155; color: white; }
+        .menu-btn.active { background: var(--primary); color: white; }
 
         /* Main Content */
-        .main { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-        .tool-card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: none; width: 100%; max-width: 800px; }
-        .tool-card.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .main { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+        .tool-card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: none; width: 100%; max-width: 600px; }
+        .tool-card.active { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        h3 { margin-top: 0; color: var(--sidebar); border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 20px; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; outline: none; }
-        input:focus, select:focus { border-color: var(--primary); }
-        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
-        button:hover { filter: brightness(1.1); }
+        /* Form elements */
+        h3 { margin-top: 0; font-size: 1.25rem; color: var(--sidebar); border-left: 5px solid var(--primary); padding-left: 10px; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 16px; /* Ngăn iOS zoom input */ }
+        button { background: var(--primary); color: white; border: none; padding: 14px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 5px; }
+        
+        .result-box { background: #eff6ff; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #dbeafe; color: #1e40af; word-wrap: break-word; }
 
-        /* Custom UI */
-        .result-box { background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #dbeafe; min-height: 50px; color: #1e40af; font-weight: 500; }
-        .todo-item { display: flex; align-items: center; background: #f8fafc; padding: 10px; margin-bottom: 5px; border-radius: 8px; }
-        .timer-display { font-size: 4rem; font-weight: bold; text-align: center; margin: 20px 0; color: var(--sidebar); }
-        .flashcard-inner { width: 100%; height: 200px; cursor: pointer; perspective: 1000px; margin: 15px 0; }
-        .card-body { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
-        .card-body.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; font-size: 1.2rem; padding: 20px; border: 1px solid #e2e8f0; background: #fff; }
-        .card-back { transform: rotateY(180deg); background: #fefce8; color: #854d0e; }
+        /* Tiện ích đặc biệt */
+        .timer-display { font-size: 4.5rem; font-weight: 800; text-align: center; margin: 10px 0; font-family: monospace; color: var(--sidebar); }
+        .todo-item { display: flex; align-items: center; background: #f8fafc; padding: 12px; margin-bottom: 8px; border-radius: 12px; gap: 10px; border: 1px solid #eee; }
+        .currency-row { display: flex; gap: 10px; align-items: center; }
+
+        /* Media Queries cho Điện thoại */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { 
+                position: fixed; left: 0; top: 0; bottom: 0; z-index: 2000; 
+                transform: translateX(-100%); width: 80%; box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay { 
+                display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; 
+            }
+            .sidebar-overlay.show { display: block; }
+            .main { padding: 15px; }
+            .timer-display { font-size: 3.5rem; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>OFFICE HUB 2025</h2>
-        
-        <div class="menu-group">
-            <span class="menu-label">Cá nhân & Năng suất</span>
-            <button class="menu-btn active" onclick="showTool('todo', this)">📝 To-do & Excel</button>
-            <button class="menu-btn" onclick="showTool('pomodoro', this)">⏱️ Pomodoro</button>
-            <button class="menu-btn" onclick="showTool('notes', this)">📓 Ghi chú nhanh</button>
-            <button class="menu-btn" onclick="showTool('flashcards', this)">📇 Flashcards</button>
+    <div class="mobile-header">
+        <button onclick="toggleMenu()" style="width: auto; background: none; font-size: 1.5rem; padding: 0;">☰</button>
+        <span style="font-weight: bold; letter-spacing: 1px;">OFFICE HUB PRO</span>
+        <div style="width: 24px;"></div> </div>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <h2>OFFICE HUB</h2>
+            
+            <span class="menu-label">Năng suất</span>
+            <button class="menu-btn active" onclick="nav('todo', this)">📝 Việc cần làm</button>
+            <button class="menu-btn" onclick="nav('pomodoro', this)">⏱️ Pomodoro</button>
+            <button class="menu-btn" onclick="nav('notes', this)">📓 Ghi chú</button>
+            <button class="menu-btn" onclick="nav('flashcards', this)">📇 Flashcards</button>
+
+            <span class="menu-label">Công cụ</span>
+            <button class="menu-btn" onclick="nav('currency', this)">💱 Đổi tiền 2 chiều</button>
+            <button class="menu-btn" onclick="nav('numToWord', this)">💰 Số thành Chữ</button>
+            <button class="menu-btn" onclick="nav('calc', this)">🧮 Máy tính %</button>
+            <button class="menu-btn" onclick="nav('age', this)">🎂 Tính tuổi</button>
         </div>
 
-        <div class="menu-group">
-            <span class="menu-label">Tài chính & Công cụ</span>
-            <button class="menu-btn" onclick="showTool('currency', this)">💱 Đổi ngoại tệ</button>
-            <button class="menu-btn" onclick="showTool('numToWord', this)">💰 Số thành Chữ</button>
-            <button class="menu-btn" onclick="showTool('calc', this)">🧮 Máy tính %</button>
-        </div>
-
-        <div class="menu-group">
-            <span class="menu-label">Tiện ích hệ thống</span>
-            <button class="menu-btn" onclick="showTool('age', this)">🎂 Tính tuổi</button>
-            <button class="menu-btn" onclick="showTool('link', this)">🔗 Rút gọn link</button>
-        </div>
-    </div>
-
-    <div class="main">
-        <section id="currency" class="tool-card">
-            <h3>Chuyển đổi ngoại tệ (Tỷ giá Real-time)</h3>
-            <label>Số tiền:</label>
-            <input type="number" id="currAmount" placeholder="Nhập số tiền..." oninput="convertCurrency()">
-            <label>Đơn vị nguồn:</label>
-            <select id="currFrom" onchange="convertCurrency()">
-                <option value="USD">USD - Đô la Mỹ</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="CNY">CNY - Nhân dân tệ (Trung Quốc)</option>
-                <option value="KRW">KRW - Won (Hàn Quốc)</option>
-            </select>
-            <div class="result-box" id="currResult">Kết quả: 0 VND</div>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">* Hệ thống tự động cập nhật tỷ giá từ ngân hàng thế giới.</p>
-        </section>
-
-        <section id="todo" class="tool-card active">
-            <div style="display: flex; justify-content: space-between;">
-                <h3>Danh sách công việc</h3>
-                <button onclick="exportToExcel()" style="background:var(--success)">Xuất Excel</button>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="todoInput" placeholder="Thêm việc mới...">
-                <button onclick="addTodo()">Thêm</button>
-            </div>
-            <div id="todoList" style="margin-top:15px;"></div>
-        </section>
-
-        <section id="pomodoro" class="tool-card">
-            <h3>Pomodoro - Làm việc tập trung</h3>
-            <div class="timer-display" id="timerDisplay">25:00</div>
-            <div style="display: flex; justify-content: center; gap: 10px;">
-                <button onclick="startPomo()">Bắt đầu</button>
-                <button onclick="pausePomo()" style="background:#94a3b8">Tạm dừng</button>
-                <button onclick="resetPomo()" style="background:var(--danger)">Reset</button>
-            </div>
-        </section>
-
-        <section id="numToWord" class="tool-card">
-            <h3>Chuyển số thành chữ (VND)</h3>
-            <input type="number" id="numInput" placeholder="Ví dụ: 5000000" oninput="convertNumToWord()">
-            <div class="result-box" id="wordResult">...</div>
-        </section>
-
-        <section id="flashcards" class="tool-card">
-            <h3>Ghi nhớ thông minh</h3>
-            <div class="flashcard-inner" onclick="flipCard()">
-                <div class="card-body" id="cardInner">
-                    <div class="card-front" id="cardFront">Bấm để lật thẻ</div>
-                    <div class="card-back" id="cardBack">Mặt sau đáp án</div>
+        <div class="main">
+            <section id="currency" class="tool-card">
+                <h3>Đổi tiền 2 chiều</h3>
+                <div class="currency-row">
+                    <select id="currFrom" onchange="convertCurrency()"><option value="USD">USD</option><option value="EUR">EUR</option><option value="CNY">CNY</option><option value="KRW">KRW</option><option value="VND">VND</option></select>
+                    <button onclick="swapCurr()" style="width: 60px; background: #64748b;">⇄</button>
+                    <select id="currTo" onchange="convertCurrency()"><option value="VND" selected>VND</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="CNY">CNY</option><option value="KRW">KRW</option></select>
                 </div>
-            </div>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <button onclick="prevCard()">←</button>
-                <span id="cardIdx">0 / 0</span>
-                <button onclick="nextCard()">→</button>
-            </div>
-            <input id="fFront" placeholder="Câu hỏi">
-            <input id="fBack" placeholder="Câu trả lời">
-            <button onclick="addFlashcard()">Thêm thẻ mới</button>
-        </section>
+                <input type="number" id="currAmount" placeholder="Nhập số tiền..." oninput="convertCurrency()">
+                <div class="result-box" id="currResult">Kết quả: 0</div>
+            </section>
 
-        <section id="notes" class="tool-card">
-            <h3>Ghi chú nhanh</h3>
-            <textarea id="noteArea" style="height:300px" oninput="saveNotes()" placeholder="Ghi chú sẽ tự động lưu lại..."></textarea>
-        </section>
+            <section id="pomodoro" class="tool-card">
+                <h3>Pomodoro Tùy Chỉnh</h3>
+                <div class="timer-display" id="timer">25:00</div>
+                <input type="number" id="customMins" placeholder="Nhập số phút mới (vd: 10)">
+                <button onclick="setTimer()" style="background:#64748b; margin-bottom: 10px;">Đặt thời gian</button>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="startT()" id="startBtn">Bắt đầu</button>
+                    <button onclick="resetT()" style="background:#ef4444">Reset</button>
+                </div>
+            </section>
 
-        <section id="calc" class="tool-card">
-            <h3>Máy tính %</h3>
-            <input id="calcExp" placeholder="Ví dụ: 1500000 * 10% + 20000">
-            <button onclick="calc()" style="width:100%">Tính ngay</button>
-            <div class="result-box" id="calcRes">0</div>
-        </section>
+            <section id="todo" class="tool-card active">
+                <h3>Việc cần làm</h3>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="todoIn" placeholder="Thêm việc...">
+                    <button onclick="addT()" style="width: 80px;">Thêm</button>
+                </div>
+                <div id="todoList" style="margin-top: 15px;"></div>
+                <button onclick="exportX()" style="background:#22c55e; margin-top: 15px;">Tải file Excel</button>
+            </section>
 
-        <section id="age" class="tool-card">
-            <h3>Tính tuổi & Ngày sống</h3>
-            <input type="date" id="birthDate" onchange="calcAge()">
-            <div class="result-box" id="ageRes">...</div>
-        </section>
+            <section id="notes" class="tool-card">
+                <h3>Ghi chú nhanh</h3>
+                <textarea id="noteArea" style="height: 300px;" oninput="saveN()" placeholder="Gõ nội dung tại đây..."></textarea>
+            </section>
 
-        <section id="link" class="tool-card">
-            <h3>Rút gọn link nhanh</h3>
-            <input id="longLink" placeholder="Dán link dài tại đây...">
-            <button onclick="shorten()">Rút gọn</button>
-            <div class="result-box" id="shortRes"></div>
-        </section>
+            <section id="numToWord" class="tool-card">
+                <h3>Số thành chữ</h3>
+                <input type="number" id="nIn" placeholder="Nhập số tiền..." oninput="numToW()">
+                <div class="result-box" id="wRes">Kết quả...</div>
+            </section>
+
+            <section id="calc" class="tool-card">
+                <h3>Máy tính %</h3>
+                <input id="cExp" placeholder="Ví dụ: 500k * 15%">
+                <button onclick="runCalc()">Tính toán</button>
+                <div class="result-box" id="cRes">0</div>
+            </section>
+
+            <section id="age" class="tool-card">
+                <h3>Tính tuổi</h3>
+                <input type="date" id="bDate" onchange="runAge()">
+                <div class="result-box" id="aRes">Kết quả...</div>
+            </section>
+
+            <section id="flashcards" class="tool-card">
+                <h3>Flashcards</h3>
+                <div style="background: #fffbeb; height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 15px; border: 2px dashed #fcd34d; font-size: 1.2rem; padding: 20px; text-align: center;" id="fcContent" onclick="flipFC()">
+                    Bấm để bắt đầu
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="nextFC()">Tiếp theo</button>
+                </div>
+                <input id="fcF" placeholder="Mặt trước" style="margin-top: 20px;">
+                <input id="fcB" placeholder="Mặt sau">
+                <button onclick="addFC()">Thêm thẻ</button>
+            </section>
+        </div>
     </div>
 
     <script>
-        // Điều hướng
-        function showTool(id, btn) {
+        // Điều hướng & Menu Mobile
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        function nav(id, btn) {
             document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             btn.classList.add('active');
+            if(window.innerWidth <= 768) toggleMenu();
         }
 
-        // --- ĐỔI NGOẠI TỆ (API Thực tế) ---
+        // --- NGOẠI TỆ 2 CHIỀU ---
         async function convertCurrency() {
-            const amount = document.getElementById('currAmount').value;
+            const amt = document.getElementById('currAmount').value;
             const from = document.getElementById('currFrom').value;
-            const resBox = document.getElementById('currResult');
-            if (!amount) { resBox.innerText = "Kết quả: 0 VND"; return; }
-            resBox.innerText = "Đang cập nhật tỷ giá...";
+            const to = document.getElementById('currTo').value;
+            const res = document.getElementById('currResult');
+            if(!amt) return;
+            res.innerText = "Đang tính...";
             try {
                 const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
                 const data = await response.json();
-                const rate = data.rates.VND;
-                const result = amount * rate;
-                resBox.innerHTML = `Kết quả: <b>${result.toLocaleString()} VND</b><br><small>Tỷ giá: 1 ${from} ≈ ${rate.toLocaleString()} VND</small>`;
-            } catch {
-                resBox.innerText = "Lỗi kết nối tỷ giá! Hãy thử lại sau.";
-            }
+                const total = amt * data.rates[to];
+                res.innerHTML = `Kết quả: <b>${total.toLocaleString()} ${to}</b>`;
+            } catch { res.innerText = "Lỗi kết nối!"; }
         }
-
-        // --- TO-DO LIST & EXCEL ---
-        let todos = JSON.parse(localStorage.getItem('off_todo')) || [];
-        function renderTodo() {
-            const list = document.getElementById('todoList');
-            list.innerHTML = todos.map((t, i) => `
-                <div class="todo-item">
-                    <input type="checkbox" ${t.done?'checked':''} onclick="toggleTodo(${i})">
-                    <span style="flex:1; margin-left:10px; ${t.done?'text-decoration:line-through;color:grey':''}"> ${t.text}</span>
-                    <button onclick="delTodo(${i})" style="background:none;color:red">✕</button>
-                </div>
-            `).join('');
-            localStorage.setItem('off_todo', JSON.stringify(todos));
+        function swapCurr() {
+            const f = document.getElementById('currFrom'), t = document.getElementById('currTo');
+            [f.value, t.value] = [t.value, f.value]; convertCurrency();
         }
-        function addTodo() {
-            const val = document.getElementById('todoInput').value;
-            if(val) { todos.push({text: val, done: false}); document.getElementById('todoInput').value=''; renderTodo(); }
-        }
-        function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodo(); }
-        function delTodo(i) { todos.splice(i, 1); renderTodo(); }
-        function exportToExcel() {
-            const ws = XLSX.utils.json_to_sheet(todos);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Tasks");
-            XLSX.writeFile(wb, "Office_Tasks.xlsx");
-        }
-        renderTodo();
 
         // --- POMODORO ---
-        let pTimer, pLeft = 1500;
-        function updateP() {
-            let m = Math.floor(pLeft/60).toString().padStart(2,'0'), s = (pLeft%60).toString().padStart(2,'0');
-            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+        let timer, pSecs = 1500, isR = false;
+        function updateT() {
+            document.getElementById('timer').innerText = `${Math.floor(pSecs/60).toString().padStart(2,'0')}:${(pSecs%60).toString().padStart(2,'0')}`;
         }
-        function startPomo() { clearInterval(pTimer); pTimer = setInterval(() => { pLeft--; updateP(); if(pLeft<=0) { clearInterval(pTimer); alert("Hết giờ làm việc!"); } }, 1000); }
-        function pausePomo() { clearInterval(pTimer); }
-        function resetPomo() { clearInterval(pTimer); pLeft = 1500; updateP(); }
+        function setTimer() {
+            const m = document.getElementById('customMins').value;
+            if(m>0) { pSecs = m * 60; updateT(); clearInterval(timer); isR = false; document.getElementById('startBtn').innerText = "Bắt đầu"; }
+        }
+        function startT() {
+            if(isR) { clearInterval(timer); document.getElementById('startBtn').innerText = "Tiếp tục"; }
+            else {
+                timer = setInterval(() => { pSecs--; updateT(); if(pSecs<=0){ clearInterval(timer); alert("Hết giờ!"); }}, 1000);
+                document.getElementById('startBtn').innerText = "Tạm dừng";
+            }
+            isR = !isR;
+        }
+        function resetT() { clearInterval(timer); pSecs = 1500; updateT(); isR = false; document.getElementById('startBtn').innerText = "Bắt đầu"; }
+
+        // --- TO-DO LIST ---
+        let todos = JSON.parse(localStorage.getItem('m_todos')) || [];
+        function renderT() {
+            document.getElementById('todoList').innerHTML = todos.map((t, i) => `
+                <div class="todo-item">
+                    <input type="checkbox" ${t.d?'checked':''} onclick="toggleT(${i})">
+                    <span style="flex:1; ${t.d?'text-decoration:line-through;color:gray':''}"> ${t.text}</span>
+                    <button onclick="delT(${i})" style="width:40px; background:none; color:red; padding:0">✕</button>
+                </div>
+            `).join('');
+            localStorage.setItem('m_todos', JSON.stringify(todos));
+        }
+        function addT() { const v = document.getElementById('todoIn').value; if(v){ todos.push({text:v, d:false}); document.getElementById('todoIn').value=''; renderT(); } }
+        function toggleT(i) { todos[i].d = !todos[i].d; renderT(); }
+        function delT(i) { todos.splice(i, 1); renderT(); }
+        function exportX() {
+            const ws = XLSX.utils.json_to_sheet(todos);
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "CongViec");
+            XLSX.writeFile(wb, "Office_Task.xlsx");
+        }
+        renderT();
+
+        // --- GHI CHÚ ---
+        document.getElementById('noteArea').value = localStorage.getItem('m_notes') || '';
+        function saveN() { localStorage.setItem('m_notes', document.getElementById('noteArea').value); }
 
         // --- SỐ THÀNH CHỮ ---
-        function convertNumToWord() {
-            const n = document.getElementById('numInput').value;
-            if(!n) return;
-            document.getElementById('wordResult').innerText = to_vn(n) + " đồng.";
+        function numToW() {
+            const n = document.getElementById('nIn').value;
+            if(n) document.getElementById('wRes').innerText = to_vn(n) + " đồng.";
         }
         function to_vn(n) {
             const s = ["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"];
@@ -256,36 +276,32 @@
             return res.trim().charAt(0).toUpperCase() + res.trim().slice(1);
         }
 
-        // --- FLASHCARDS ---
-        let cards = JSON.parse(localStorage.getItem('off_cards')) || [], cIdx = 0;
-        function flipCard() { document.getElementById('cardInner').classList.toggle('flipped'); }
-        function renderCard() {
-            if(!cards.length) { document.getElementById('cardFront').innerText="Trống"; document.getElementById('cardBack').innerText="Trống"; return; }
-            document.getElementById('cardFront').innerText = cards[cIdx].f;
-            document.getElementById('cardBack').innerText = cards[cIdx].b;
-            document.getElementById('cardIdx').innerText = `${cIdx+1} / ${cards.length}`;
+        // --- MÁY TÍNH ---
+        function runCalc() {
+            try { 
+                let exp = document.getElementById('cExp').value.replace(/k/g, '000').replace(/%/g, '/100');
+                document.getElementById('cRes').innerText = eval(exp).toLocaleString();
+            } catch { alert("Lỗi!"); }
         }
-        function addFlashcard() {
-            const f = document.getElementById('fFront').value, b = document.getElementById('fBack').value;
-            if(f&&b) { cards.push({f,b}); localStorage.setItem('off_cards', JSON.stringify(cards)); renderCard(); }
-        }
-        function nextCard() { cIdx = (cIdx+1)%cards.length; renderCard(); }
-        function prevCard() { cIdx = (cIdx-1+cards.length)%cards.length; renderCard(); }
-        renderCard();
 
-        // --- TIỆN ÍCH KHÁC ---
-        function saveNotes() { localStorage.setItem('off_notes', document.getElementById('noteArea').value); }
-        document.getElementById('noteArea').value = localStorage.getItem('off_notes') || '';
-        function calc() { try { document.getElementById('calcRes').innerText = eval(document.getElementById('calcExp').value.replace(/%/g,'/100')).toLocaleString(); } catch { alert("Lỗi!"); } }
-        function calcAge() {
-            const b = new Date(document.getElementById('birthDate').value), n = new Date();
-            let y = n.getFullYear()-b.getFullYear();
-            document.getElementById('ageRes').innerText = `${y} tuổi. (Đã sống khoảng ${Math.floor((n-b)/(1000*60*60*24))} ngày)`;
+        // --- TÍNH TUỔI ---
+        function runAge() {
+            const b = new Date(document.getElementById('bDate').value), n = new Date();
+            document.getElementById('aRes').innerText = `${n.getFullYear()-b.getFullYear()} tuổi.`;
         }
-        async function shorten() {
-            const l = document.getElementById('longLink').value;
-            const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(l)}`);
-            document.getElementById('shortRes').innerText = await res.text();
+
+        // --- FLASHCARDS ---
+        let fcs = JSON.parse(localStorage.getItem('m_fcs')) || [], fIdx = 0, isBack = false;
+        function flipFC() {
+            if(!fcs.length) return;
+            isBack = !isBack;
+            document.getElementById('fcContent').innerText = isBack ? fcs[fIdx].b : fcs[fIdx].f;
+            document.getElementById('fcContent').style.background = isBack ? "#fefce8" : "#fffbeb";
+        }
+        function nextFC() { if(fcs.length){ fIdx = (fIdx+1)%fcs.length; isBack = false; flipFC(); isBack = false; } }
+        function addFC() {
+            const f = document.getElementById('fcF').value, b = document.getElementById('fcB').value;
+            if(f&&b){ fcs.push({f,b}); localStorage.setItem('m_fcs', JSON.stringify(fcs)); alert("Đã thêm!"); }
         }
     </script>
 </body>
