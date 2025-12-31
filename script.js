@@ -76,3 +76,16 @@ const run = () => {
 };
 
 run();
+// Hàm đóng mở Menu
+function toggleMenu() {
+    const menu = document.getElementById("radialMenu");
+    menu.classList.toggle("active");
+}
+
+// Tự động đóng menu nếu người dùng click ra ngoài menu
+window.addEventListener("click", function(e) {
+    const menu = document.getElementById("radialMenu");
+    if (!menu.contains(e.target) && menu.classList.contains("active")) {
+        menu.classList.remove("active");
+    }
+});

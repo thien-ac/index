@@ -18,3 +18,72 @@ svg {
 	cursor: pointer;
 	filter: sepia(20%);
 }
+/* Container chính ở góc phải */
+.menu-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+}
+
+/* Nút chính (Toggle) */
+.menu-toggle {
+  width: 60px;
+  height: 60px;
+  background: #222;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s;
+}
+
+.menu-toggle:active { transform: scale(0.9); }
+
+/* Icon đóng/mở */
+.icon-close { display: none; font-size: 24px; }
+.icon-open { font-size: 24px; }
+
+/* Các nút con */
+.menu-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Khi menu mở (Active) */
+.menu-container.active .icon-open { display: none; }
+.menu-container.active .icon-close { display: block; }
+.menu-container.active .menu-toggle { background: #ff4757; }
+
+/* Tọa độ các nút con khi bung ra (Góc phần tư phía trên bên trái) */
+.menu-container.active .item-1 { opacity: 1; transform: translate(-80px, 0); }      /* Sang trái */
+.menu-container.active .item-2 { opacity: 1; transform: translate(-60px, -60px); } /* Chéo */
+.menu-container.active .item-3 { opacity: 1; transform: translate(0, -80px); }      /* Lên trên */
+
+.menu-item:hover {
+  background: #3c6199;
+  color: white;
+}
