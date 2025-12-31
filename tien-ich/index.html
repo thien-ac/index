@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Office Hub Pro - Mobile Friendly</title>
+    <title>Học Tiếng Trung & Công Cụ Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <style>
         :root {
             --primary: #2563eb;
@@ -12,19 +13,21 @@
             --sidebar: #1e293b;
             --text: #334155;
             --white: #ffffff;
+            --accent: #ef4444;
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        /* Header cho Mobile */
+        /* Header Mobile */
         .mobile-header {
             display: none; background: var(--sidebar); color: white;
             padding: 15px; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 1000;
         }
 
-        /* Sidebar - Trên Desktop hiện bên trái, trên Mobile là menu trượt */
         .container { display: flex; flex: 1; overflow: hidden; position: relative; }
+        
+        /* Sidebar */
         .sidebar { 
             width: 280px; background: var(--sidebar); color: white; padding: 20px; 
             display: flex; flex-direction: column; overflow-y: auto; transition: transform 0.3s ease;
@@ -33,380 +36,259 @@
         .menu-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin: 15px 0 5px 10px; }
         .menu-btn { 
             width: 100%; background: none; border: none; color: #94a3b8; padding: 12px 15px; 
-            text-align: left; cursor: pointer; font-size: 1rem; border-radius: 10px; transition: 0.2s;
-            display: flex; align-items: center; gap: 10px;
+            text-align: left; cursor: pointer; font-size: 0.95rem; border-radius: 10px; transition: 0.2s;
+            display: flex; align-items: center; gap: 10px; margin-bottom: 5px;
         }
         .menu-btn.active { background: var(--primary); color: white; }
 
         /* Main Content */
         .main { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-        .tool-card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: none; width: 100%; max-width: 600px; }
+        .tool-card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: none; width: 100%; max-width: 600px; }
         .tool-card.active { display: block; animation: slideUp 0.3s ease-out; }
+        
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Form elements */
-        h3 { margin-top: 0; font-size: 1.25rem; color: var(--sidebar); border-left: 5px solid var(--primary); padding-left: 10px; }
-        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 16px; /* Ngăn iOS zoom input */ }
-        button { background: var(--primary); color: white; border: none; padding: 14px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 5px; }
-        
-        .result-box { background: #eff6ff; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #dbeafe; color: #1e40af; word-wrap: break-word; }
+        h3 { margin-top: 0; font-size: 1.25rem; color: var(--sidebar); border-left: 5px solid var(--primary); padding-left: 10px; margin-bottom: 20px; }
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
 
-        /* Tiện ích đặc biệt */
-        .timer-display { font-size: 4.5rem; font-weight: 800; text-align: center; margin: 10px 0; font-family: monospace; color: var(--sidebar); }
-        .todo-item { display: flex; align-items: center; background: #f8fafc; padding: 12px; margin-bottom: 8px; border-radius: 12px; gap: 10px; border: 1px solid #eee; }
-        .currency-row { display: flex; gap: 10px; align-items: center; }
+        /* Vòng quay Lì xì */
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; border: 5px solid #f59e0b; border-radius: 50%; }
+        #wheel { transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); width: 100%; height: 100%; }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid #ef4444; z-index: 10; }
 
-        /* Media Queries cho Điện thoại */
+        /* Bộ thủ & Pinyin */
+        #rad-char { font-size: 5rem; text-align: center; color: var(--primary); font-family: "KaiTi", serif; }
+        .pinyin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+        .pinyin-btn { background: #f8fafc; border: 1px solid #e2e8f0; color: var(--text); padding: 10px; border-radius: 8px; font-weight: bold; }
+
+        /* Menu tròn (Radial Menu) */
+        .radial-menu { position: fixed; bottom: 20px; right: 20px; z-index: 999; }
+        .radial-btn { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.3s; }
+        .radial-items { position: absolute; bottom: 60px; right: 0; display: none; flex-direction: column; gap: 10px; }
+        .radial-menu.open .radial-items { display: flex; }
+        .radial-item { width: 45px; height: 45px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-decoration: none; font-size: 12px; font-weight: bold; color: var(--text); }
+
         @media (max-width: 768px) {
             .mobile-header { display: flex; }
-            .sidebar { 
-                position: fixed; left: 0; top: 0; bottom: 0; z-index: 2000; 
-                transform: translateX(-100%); width: 80%; box-shadow: 20px 0 50px rgba(0,0,0,0.5);
-            }
+            .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 2000; transform: translateX(-100%); width: 80%; }
             .sidebar.open { transform: translateX(0); }
-            .sidebar-overlay { 
-                display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; 
-            }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
             .sidebar-overlay.show { display: block; }
-            .main { padding: 15px; }
-            .timer-display { font-size: 3.5rem; }
         }
-        #radical-card {
-    transition: all 0.3s ease;
-}
-
-#rad-char {
-    text-shadow: 2px 2px 10px rgba(37, 99, 235, 0.2);
-    font-family: "KaiTi", "STKaiti", serif; /* Font chữ thư pháp nếu có */
-}
-
-#quiz-options button:hover {
-    background: var(--primary) !important;
-    color: white !important;
-}
-
-@media (max-width: 768px) {
-    #rad-char { font-size: 4rem; }
-    #quiz-options { grid-template-columns: 1fr; }
-}
     </style>
 </head>
 <body>
 
     <div class="mobile-header">
-        <button onclick="toggleMenu()" style="width: auto; background: none; font-size: 1.5rem; padding: 0;">☰</button>
-        <span style="font-weight: bold; letter-spacing: 1px;">OFFICE HUB PRO</span>
-        <div style="width: 24px;"></div> </div>
+        <button onclick="toggleMenu()" style="width: auto; background: none; font-size: 1.5rem;">☰</button>
+        <span style="font-weight: bold;">OFFICE HUB PRO</span>
+        <div style="width: 24px;"></div>
+    </div>
 
     <div class="sidebar-overlay" id="overlay" onclick="toggleMenu()"></div>
 
     <div class="container">
         <div class="sidebar" id="sidebar">
             <h2>OFFICE HUB</h2>
+            <span class="menu-label">Học tập</span>
+            <button class="menu-btn active" onclick="nav('radicals', this)">⛩️ 214 Bộ Thủ</button>
+            <button class="menu-btn" onclick="nav('pinyin', this)">🗣️ Phát âm Pinyin</button>
+            
+            <span class="menu-label">Giải trí</span>
+            <button class="menu-btn" onclick="nav('lixi', this)">🧧 Vòng quay Lì xì</button>
             
             <span class="menu-label">Năng suất</span>
-            <button class="menu-btn active" onclick="nav('todo', this)">📝 Việc cần làm</button>
-            <button class="menu-btn" onclick="nav('pomodoro', this)">⏱️ Pomodoro</button>
-            <button class="menu-btn" onclick="nav('notes', this)">📓 Ghi chú</button>
-            <button class="menu-btn" onclick="nav('flashcards', this)">📇 Flashcards</button>
-
-            <span class="menu-label">Công cụ</span>
-            <button class="menu-btn" onclick="nav('radicals', this)">⛩️ Học Bộ Thủ</button>
-
-<section id="radicals" class="tool-card">
-    <h3>214 Bộ Thủ Tiếng Trung</h3>
-    <div id="quiz-container" style="display:none; background:#fffbe6; padding:15px; border-radius:15px; border:2px dashed #f59e0b; margin-bottom:15px;">
-        <p style="text-align:center; font-weight:bold;">Câu hỏi: <span id="quiz-q" style="font-size:2rem;"></span></p>
-        <div id="quiz-options" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
-    </div>
-
-    <div id="radical-card" style="text-align:center; padding:30px; border:1px solid #eee; border-radius:20px; background:#fafafa;">
-        <div id="rad-char" style="font-size:5rem; color:var(--primary);">一</div>
-        <div id="rad-info" style="margin:15px 0;">
-            <b id="rad-viet" style="font-size:1.5rem;">Bộ Nhất</b><br>
-            <span id="rad-mean" style="color:#64748b;">Ý nghĩa: Số một</span>
-        </div>
-        <div id="rad-origin" style="font-style:italic; font-size:0.9rem; color:#ef4444; background:#fee2e2; padding:10px; border-radius:10px;">
-            Minh họa: Một đường kẻ ngang tượng trưng cho số 1 hoặc mặt đất.
-        </div>
-    </div>
-
-    <div style="display:flex; gap:10px; margin-top:15px;">
-        <button onclick="prevRad()" style="background:#64748b;">Trước đó</button>
-        <button onclick="nextRad()">Tiếp theo</button>
-        <button onclick="startRadQuiz()" style="background:#22c55e;">Luyện tập (Quiz)</button>
-    </div>
-</section>
-            <button class="menu-btn" onclick="nav('currency', this)">💱 Đổi tiền 2 chiều</button>
-            <button class="menu-btn" onclick="nav('numToWord', this)">💰 Số thành Chữ</button>
-            <button class="menu-btn" onclick="nav('calc', this)">🧮 Máy tính %</button>
-            <button class="menu-btn" onclick="nav('age', this)">🎂 Tính tuổi</button>
+            <button class="menu-btn" onclick="nav('todo', this)">📝 Việc cần làm</button>
+            <button class="menu-btn" onclick="nav('notes', this)">📓 Ghi chú nhanh</button>
         </div>
 
         <div class="main">
-            <section id="currency" class="tool-card">
-                <h3>Đổi tiền 2 chiều</h3>
-                <div class="currency-row">
-                    <select id="currFrom" onchange="convertCurrency()"><option value="USD">USD</option><option value="EUR">EUR</option><option value="CNY">CNY</option><option value="KRW">KRW</option><option value="VND">VND</option></select>
-                    <button onclick="swapCurr()" style="width: 60px; background: #64748b;">⇄</button>
-                    <select id="currTo" onchange="convertCurrency()"><option value="VND" selected>VND</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="CNY">CNY</option><option value="KRW">KRW</option></select>
+            <section id="radicals" class="tool-card active">
+                <h3>⛩️ 214 Bộ Thủ Tượng Hình</h3>
+                <div id="rad-card" style="text-align:center; background:#fafafa; padding:20px; border-radius:15px;">
+                    <div id="rad-char">一</div>
+                    <b id="rad-viet" style="font-size:1.4rem;">Bộ Nhất</b><br>
+                    <p id="rad-mean">Ý nghĩa: Số một</p>
+                    <div id="rad-origin" style="font-size:0.9rem; color:var(--accent); background:#fee2e2; padding:10px; border-radius:10px; font-style:italic;">
+                        Mô tả: Một vạch ngang chỉ số 1 hoặc mặt đất.
+                    </div>
                 </div>
-                <input type="number" id="currAmount" placeholder="Nhập số tiền..." oninput="convertCurrency()">
-                <div class="result-box" id="currResult">Kết quả: 0</div>
-            </section>
-
-            <section id="pomodoro" class="tool-card">
-                <h3>Pomodoro Tùy Chỉnh</h3>
-                <div class="timer-display" id="timer">25:00</div>
-                <input type="number" id="customMins" placeholder="Nhập số phút mới (vd: 10)">
-                <button onclick="setTimer()" style="background:#64748b; margin-bottom: 10px;">Đặt thời gian</button>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="startT()" id="startBtn">Bắt đầu</button>
-                    <button onclick="resetT()" style="background:#ef4444">Reset</button>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button onclick="prevRad()" style="background:#64748b;">Trình trước</button>
+                    <button onclick="nextRad()">Tiếp theo</button>
                 </div>
             </section>
 
-            <section id="todo" class="tool-card active">
-                <h3>Việc cần làm</h3>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="todoIn" placeholder="Thêm việc...">
-                    <button onclick="addT()" style="width: 80px;">Thêm</button>
+            <section id="pinyin" class="tool-card">
+                <h3>🗣️ Cách Đặt Lưỡi Pinyin</h3>
+                <div class="pinyin-grid" id="pinyinGrid"></div>
+                <div id="p-detail" style="margin-top:20px; padding:15px; border:1px solid #eee; border-radius:15px; display:none;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span id="p-char" style="font-size:2.5rem; font-weight:bold; color:var(--primary);">b</span>
+                        <button onclick="speakPinyin()" style="width:auto; background:#22c55e;">🔊 Nghe</button>
+                    </div>
+                    <p><strong>Khẩu hình:</strong> <span id="p-mouth"></span></p>
+                    <p><strong>Vị trí lưỡi:</strong> <span id="p-tongue"></span></p>
+                    
                 </div>
-                <div id="todoList" style="margin-top: 15px;"></div>
-                <button onclick="exportX()" style="background:#22c55e; margin-top: 15px;">Tải file Excel</button>
+            </section>
+
+            <section id="lixi" class="tool-card">
+                <h3>🧧 Vòng Quay Lì Xì 2026</h3>
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <canvas id="wheel" width="300" height="300"></canvas>
+                </div>
+                <button onclick="spinWheel()" id="spinBtn">QUAY NGAY</button>
+                <div id="lixi-res" style="text-align:center; margin-top:15px; font-weight:bold; font-size:1.2rem; color:var(--accent);"></div>
+            </section>
+
+            <section id="todo" class="tool-card">
+                <h3>📝 Việc cần làm</h3>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="todoIn" placeholder="Thêm việc mới..." style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">
+                    <button onclick="addTodo()" style="width:80px;">Thêm</button>
+                </div>
+                <div id="todoList" style="margin-top:15px;"></div>
             </section>
 
             <section id="notes" class="tool-card">
-                <h3>Ghi chú nhanh</h3>
-                <textarea id="noteArea" style="height: 300px;" oninput="saveN()" placeholder="Gõ nội dung tại đây..."></textarea>
-            </section>
-
-            <section id="numToWord" class="tool-card">
-                <h3>Số thành chữ</h3>
-                <input type="number" id="nIn" placeholder="Nhập số tiền..." oninput="numToW()">
-                <div class="result-box" id="wRes">Kết quả...</div>
-            </section>
-
-            <section id="calc" class="tool-card">
-                <h3>Máy tính %</h3>
-                <input id="cExp" placeholder="Ví dụ: 500k * 15%">
-                <button onclick="runCalc()">Tính toán</button>
-                <div class="result-box" id="cRes">0</div>
-            </section>
-
-            <section id="age" class="tool-card">
-                <h3>Tính tuổi</h3>
-                <input type="date" id="bDate" onchange="runAge()">
-                <div class="result-box" id="aRes">Kết quả...</div>
-            </section>
-
-            <section id="flashcards" class="tool-card">
-                <h3>Flashcards</h3>
-                <div style="background: #fffbeb; height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 15px; border: 2px dashed #fcd34d; font-size: 1.2rem; padding: 20px; text-align: center;" id="fcContent" onclick="flipFC()">
-                    Bấm để bắt đầu
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="nextFC()">Tiếp theo</button>
-                </div>
-                <input id="fcF" placeholder="Mặt trước" style="margin-top: 20px;">
-                <input id="fcB" placeholder="Mặt sau">
-                <button onclick="addFC()">Thêm thẻ</button>
+                <h3>📓 Ghi chú nhanh</h3>
+                <textarea id="noteArea" style="width:100%; height:300px; padding:15px; border-radius:15px; border:1px solid #ddd;" oninput="saveNote()"></textarea>
             </section>
         </div>
     </div>
 
+    <div class="radial-menu" id="radialMenu">
+        <div class="radial-items">
+            <a href="#" class="radial-item">Blog</a>
+            <a href="#" class="radial-item">Tool</a>
+            <a href="#" class="radial-item">Social</a>
+        </div>
+        <div class="radial-btn" onclick="document.getElementById('radialMenu').classList.toggle('open')">☰</div>
+    </div>
+
     <script>
-        // Điều hướng & Menu Mobile
+        // NAVIGATION
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('show');
         }
-
         function nav(id, btn) {
             document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             btn.classList.add('active');
             if(window.innerWidth <= 768) toggleMenu();
+            if(id === 'lixi') drawWheel();
         }
 
-        // --- NGOẠI TỆ 2 CHIỀU ---
-        async function convertCurrency() {
-            const amt = document.getElementById('currAmount').value;
-            const from = document.getElementById('currFrom').value;
-            const to = document.getElementById('currTo').value;
-            const res = document.getElementById('currResult');
-            if(!amt) return;
-            res.innerText = "Đang tính...";
-            try {
-                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
-                const data = await response.json();
-                const total = amt * data.rates[to];
-                res.innerHTML = `Kết quả: <b>${total.toLocaleString()} ${to}</b>`;
-            } catch { res.innerText = "Lỗi kết nối!"; }
+        // DỮ LIỆU BỘ THỦ
+        const radicals = [
+            {c: "一", v: "Nhất", m: "Số một", o: "Một vạch ngang."},
+            {c: "口", v: "Khẩu", m: "Cái miệng", o: "Hình vuông giống khoang miệng."},
+            {c: "人", v: "Nhân", m: "Con người", o: "Hình dáng người đang đứng."},
+            {c: "木", v: "Mộc", m: "Cây", o: "Cây có tán lá và rễ."},
+            {c: "水", v: "Thủy", m: "Nước", o: "Dòng nước đang chảy."},
+            {c: "火", v: "Hỏa", m: "Lửa", o: "Ngọn lửa đang cháy."},
+            {c: "女", v: "Nữ", m: "Phụ nữ", o: "Người phụ nữ quỳ gối duyên dáng."}
+        ];
+        let radIdx = 0;
+        function renderRad() {
+            const r = radicals[radIdx];
+            document.getElementById('rad-char').innerText = r.c;
+            document.getElementById('rad-viet').innerText = `Bộ ${r.v}`;
+            document.getElementById('rad-mean').innerText = `Ý nghĩa: ${r.m}`;
+            document.getElementById('rad-origin').innerText = `Mô tả: ${r.o}`;
         }
-        function swapCurr() {
-            const f = document.getElementById('currFrom'), t = document.getElementById('currTo');
-            [f.value, t.value] = [t.value, f.value]; convertCurrency();
+        function nextRad() { radIdx = (radIdx + 1) % radicals.length; renderRad(); }
+        function prevRad() { radIdx = (radIdx - 1 + radicals.length) % radicals.length; renderRad(); }
+
+        // PINYIN
+        const pinyins = [
+            {s: "b", m: "Hai môi khép chặt, bật nhẹ.", t: "Lưỡi tự nhiên."},
+            {s: "p", m: "Hai môi khép, bật hơi mạnh.", t: "Lưỡi thấp."},
+            {s: "zh", m: "Tròn môi.", t: "Đầu lưỡi uốn ngược chạm ngạc cứng."},
+            {s: "j", m: "Môi mở sang hai bên.", t: "Mặt lưỡi áp sát ngạc trên."}
+        ];
+        const pGrid = document.getElementById('pinyinGrid');
+        pinyins.forEach(p => {
+            const b = document.createElement('button');
+            b.className = 'pinyin-btn';
+            b.innerText = p.s;
+            b.onclick = () => {
+                document.getElementById('p-detail').style.display = 'block';
+                document.getElementById('p-char').innerText = p.s;
+                document.getElementById('p-mouth').innerText = p.m;
+                document.getElementById('p-tongue').innerText = p.t;
+                window.lastP = p.s;
+            };
+            pGrid.appendChild(b);
+        });
+        function speakPinyin() {
+            const msg = new SpeechSynthesisUtterance(window.lastP);
+            msg.lang = 'zh-CN';
+            window.speechSynthesis.speak(msg);
         }
 
-        // --- POMODORO ---
-        let timer, pSecs = 1500, isR = false;
-        function updateT() {
-            document.getElementById('timer').innerText = `${Math.floor(pSecs/60).toString().padStart(2,'0')}:${(pSecs%60).toString().padStart(2,'0')}`;
+        // VÒNG QUAY LÌ XÌ
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const awards = ["10k", "50k", "Mất lượt", "100k", "20k", "5k", "200k", "Lại nè"];
+        const colors = ["#ef4444", "#f59e0b", "#ef4444", "#f59e0b", "#ef4444", "#f59e0b", "#ef4444", "#f59e0b"];
+        let rotation = 0;
+        function drawWheel() {
+            const arc = Math.PI / 4;
+            awards.forEach((a, i) => {
+                ctx.fillStyle = colors[i];
+                ctx.beginPath(); ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 150, i*arc, (i+1)*arc);
+                ctx.fill(); ctx.stroke();
+                ctx.save(); ctx.translate(150,150); ctx.rotate(i*arc + arc/2);
+                ctx.fillStyle="white"; ctx.font="bold 14px Arial"; ctx.fillText(a, 80, 5);
+                ctx.restore();
+            });
         }
-        function setTimer() {
-            const m = document.getElementById('customMins').value;
-            if(m>0) { pSecs = m * 60; updateT(); clearInterval(timer); isR = false; document.getElementById('startBtn').innerText = "Bắt đầu"; }
+        function spinWheel() {
+            const btn = document.getElementById('spinBtn');
+            btn.disabled = true;
+            const extra = Math.floor(Math.random() * 360) + 1800;
+            rotation += extra;
+            canvas.style.transform = `rotate(${rotation}deg)`;
+            setTimeout(() => {
+                btn.disabled = false;
+                const actual = rotation % 360;
+                const idx = Math.floor((360 - actual) / 45) % 8;
+                document.getElementById('lixi-res').innerText = "Kết quả: " + awards[idx] + " 🧧";
+            }, 4000);
         }
-        function startT() {
-            if(isR) { clearInterval(timer); document.getElementById('startBtn').innerText = "Tiếp tục"; }
-            else {
-                timer = setInterval(() => { pSecs--; updateT(); if(pSecs<=0){ clearInterval(timer); alert("Hết giờ!"); }}, 1000);
-                document.getElementById('startBtn').innerText = "Tạm dừng";
-            }
-            isR = !isR;
-        }
-        function resetT() { clearInterval(timer); pSecs = 1500; updateT(); isR = false; document.getElementById('startBtn').innerText = "Bắt đầu"; }
 
-        // --- TO-DO LIST ---
-        let todos = JSON.parse(localStorage.getItem('m_todos')) || [];
-        function renderT() {
+        // TODO LIST
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        function renderTodo() {
             document.getElementById('todoList').innerHTML = todos.map((t, i) => `
-                <div class="todo-item">
-                    <input type="checkbox" ${t.d?'checked':''} onclick="toggleT(${i})">
-                    <span style="flex:1; ${t.d?'text-decoration:line-through;color:gray':''}"> ${t.text}</span>
-                    <button onclick="delT(${i})" style="width:40px; background:none; color:red; padding:0">✕</button>
+                <div style="display:flex; align-items:center; background:#f8fafc; padding:10px; margin-bottom:5px; border-radius:10px;">
+                    <input type="checkbox" ${t.d?'checked':''} onclick="todos[${i}].d=!todos[${i}].d; saveT()">
+                    <span style="flex:1; margin-left:10px; ${t.d?'text-decoration:line-through':''}">${t.t}</span>
+                    <button onclick="todos.splice(${i},1); saveT()" style="width:30px; background:none; color:red; padding:0">✕</button>
                 </div>
             `).join('');
-            localStorage.setItem('m_todos', JSON.stringify(todos));
         }
-        function addT() { const v = document.getElementById('todoIn').value; if(v){ todos.push({text:v, d:false}); document.getElementById('todoIn').value=''; renderT(); } }
-        function toggleT(i) { todos[i].d = !todos[i].d; renderT(); }
-        function delT(i) { todos.splice(i, 1); renderT(); }
-        function exportX() {
-            const ws = XLSX.utils.json_to_sheet(todos);
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "CongViec");
-            XLSX.writeFile(wb, "Office_Task.xlsx");
+        function addTodo() {
+            const v = document.getElementById('todoIn').value;
+            if(v) { todos.push({t:v, d:false}); document.getElementById('todoIn').value=''; saveT(); }
         }
-        renderT();
+        function saveT() { localStorage.setItem('todos', JSON.stringify(todos)); renderTodo(); }
 
-        // --- GHI CHÚ ---
-        document.getElementById('noteArea').value = localStorage.getItem('m_notes') || '';
-        function saveN() { localStorage.setItem('m_notes', document.getElementById('noteArea').value); }
+        // GHI CHÚ
+        document.getElementById('noteArea').value = localStorage.getItem('notes') || '';
+        function saveNote() { localStorage.setItem('notes', document.getElementById('noteArea').value); }
 
-        // --- SỐ THÀNH CHỮ ---
-        function numToW() {
-            const n = document.getElementById('nIn').value;
-            if(n) document.getElementById('wRes').innerText = to_vn(n) + " đồng.";
-        }
-        function to_vn(n) {
-            const s = ["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"];
-            function g(gr) {
-                let r="", [c,h,d] = gr.padStart(3,'0').split('').map(Number);
-                if(c==0&&h==0&&d==0) return "";
-                if(c!=0) { r+=s[c]+" trăm "; if(h==0&&d!=0) r+="lẻ "; }
-                if(h!=0&&h!=1) { r+=s[h]+" mươi "; if(d==1) r+="mốt "; }
-                if(h==1) r+="mười ";
-                if(d!=0 && !(h>1&&d==1)) r+=(d==5&&h!=0?"lăm ":s[d]+" ");
-                return r;
-            }
-            let res="", i=0, u=["","nghìn","triệu","tỷ"], ns=n.toString();
-            while(ns.length>0) {
-                let chunk = ns.slice(-3), rChunk = g(chunk);
-                if(rChunk) res = rChunk + u[i] + " " + res;
-                ns = ns.slice(0,-3); i++;
-            }
-            return res.trim().charAt(0).toUpperCase() + res.trim().slice(1);
-        }
-
-        // --- MÁY TÍNH ---
-        function runCalc() {
-            try { 
-                let exp = document.getElementById('cExp').value.replace(/k/g, '000').replace(/%/g, '/100');
-                document.getElementById('cRes').innerText = eval(exp).toLocaleString();
-            } catch { alert("Lỗi!"); }
-        }
-
-        // --- TÍNH TUỔI ---
-        function runAge() {
-            const b = new Date(document.getElementById('bDate').value), n = new Date();
-            document.getElementById('aRes').innerText = `${n.getFullYear()-b.getFullYear()} tuổi.`;
-        }
-
-        // --- FLASHCARDS ---
-        let fcs = JSON.parse(localStorage.getItem('m_fcs')) || [], fIdx = 0, isBack = false;
-        function flipFC() {
-            if(!fcs.length) return;
-            isBack = !isBack;
-            document.getElementById('fcContent').innerText = isBack ? fcs[fIdx].b : fcs[fIdx].f;
-            document.getElementById('fcContent').style.background = isBack ? "#fefce8" : "#fffbeb";
-        }
-        function nextFC() { if(fcs.length){ fIdx = (fIdx+1)%fcs.length; isBack = false; flipFC(); isBack = false; } }
-        function addFC() {
-            const f = document.getElementById('fcF').value, b = document.getElementById('fcB').value;
-            if(f&&b){ fcs.push({f,b}); localStorage.setItem('m_fcs', JSON.stringify(fcs)); alert("Đã thêm!"); }
-        }
-        // Dữ liệu bộ thủ (Mẫu một số bộ tiêu biểu)
-const radicalData = [
-    {char: "一", viet: "Nhất", mean: "Số một", origin: "Một vạch ngang chỉ số 1."},
-    {char: "丨", viet: "Cổn", mean: "Nét sổ", origin: "Đường thẳng đứng từ trên xuống."},
-    {char: "口", viet: "Khẩu", mean: "Cái miệng", origin: "Hình vuông giống khoang miệng đang mở."},
-    {char: "人", viet: "Nhân", mean: "Con người", origin: "Hình người đang đứng thẳng bước đi."},
-    {char: "木", viet: "Mộc", mean: "Cây cối", origin: "Thân cây có tán và rễ."},
-    {char: "水", viet: "Thủy", mean: "Nước", origin: "Dòng nước đang chảy (biến thể 氵)."},
-    {char: "火", viet: "Hỏa", mean: "Lửa", origin: "Ngọn lửa bùng cháy (biến thể 灬)."},
-    {char: "土", viet: "Thổ", mean: "Đất", origin: "Cây mọc trên mặt đất."},
-    {char: "女", viet: "Nữ", mean: "Phụ nữ", origin: "Người phụ nữ đang quỳ gối duyên dáng."},
-    {char: "子", viet: "Tử", mean: "Con cái", origin: "Đứa bé đang dang tay quấn tã."}
-];
-
-let curRadIdx = 0;
-
-// Hiển thị bộ thủ
-function renderRadical() {
-    const r = radicalData[curRadIdx];
-    document.getElementById('rad-char').innerText = r.char;
-    document.getElementById('rad-viet').innerText = `Bộ ${r.viet}`;
-    document.getElementById('rad-mean').innerText = `Ý nghĩa: ${r.mean}`;
-    document.getElementById('rad-origin').innerText = `Minh họa: ${r.origin}`;
-}
-
-function nextRad() { curRadIdx = (curRadIdx + 1) % radicalData.length; renderRadical(); }
-function prevRad() { curRadIdx = (curRadIdx - 1 + radicalData.length) % radicalData.length; renderRadical(); }
-
-// Chức năng Quiz
-function startRadQuiz() {
-    const container = document.getElementById('quiz-container');
-    container.style.display = 'block';
-    
-    const correct = radicalData[Math.floor(Math.random() * radicalData.length)];
-    document.getElementById('quiz-q').innerText = correct.char;
-    
-    let options = [correct.mean];
-    while(options.length < 4) {
-        let randMean = radicalData[Math.floor(Math.random() * radicalData.length)].mean;
-        if(!options.includes(randMean)) options.push(randMean);
-    }
-    options.sort(() => Math.random() - 0.5);
-
-    const optDiv = document.getElementById('quiz-options');
-    optDiv.innerHTML = options.map(opt => `
-        <button onclick="checkRadAns('${opt}', '${correct.mean}')" style="background:white; color:var(--text); border:1px solid #ddd; font-size:0.9rem;">${opt}</button>
-    `).join('');
-}
-
-function checkRadAns(selected, correct) {
-    if(selected === correct) {
-        alert("Chính xác! 🧧");
-        startRadQuiz();
-    } else {
-        alert(`Sai rồi, đáp án là: ${correct}`);
-    }
-}
-
-// Khởi tạo mặc định
-renderRadical();
+        // KHỞI TẠO
+        renderRad();
+        renderTodo();
+        drawWheel();
     </script>
 </body>
 </html>
