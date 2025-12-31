@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#3b82f6"/>
+  <title>214 Bộ thủ tiếng Trung — Flashcards minh hoạ + Ghi tay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">🀄️ Bộ thủ • Flashcards</div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Tìm theo bộ, pinyin, nghĩa…" aria-label="Tìm kiếm" />
+    <button id="printBtn">🖨️ In/ PDF</button>
+    <select id="viewMode" aria-label="Kiểu hiển thị">
+      <option value="flat">Lưới phẳng (tất cả)</option>
+      <option value="strokes">Nhóm theo số nét</option>
+      <option value="family">Nhóm theo bộ gần giống</option>
+    </select>
+    <select id="audioMode" aria-label="Chế độ âm thanh">
+      <option value="pinyin">🔊 Đọc pinyin</option>
+      <option value="hanzi">🔊 Đọc chữ Hán</option>
+    </select>
+    <label style="display:flex;align-items:center;gap:6px"><input id="flipToggle" type="checkbox"/> Chế độ lật thẻ</label>
+    <label style="display:flex;align-items:center;gap:6px"><input id="simpToggle" type="checkbox"/> Hiển thị giản thể/biến thể</label>
+  </div>
+</header>
+<main>
+  <div id="grid" class="grid" role="list"></div>
+</main>
+<footer class="foot">
+  <div>
+    Nguồn tham khảo: Hanziway, Wikipedia, Wiktionary, HanziDB, ArchChinese (xem README).
+  </div>
+</footer>
+<script id="radData" type="application/json"></script>
+<script src="app.js"></script>
+</body>
+</html>
