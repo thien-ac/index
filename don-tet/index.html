@@ -3,12 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Chúc mừng năm mới 2026 – Happy New Year 2026" />
+ 
   <meta name="theme-color" content="#0b1023" />
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <title>Chúc Mừng Năm Mới 2026</title>
+  
+<meta name="description" content="Đón Tết Nguyên Đán Bính Ngọ 2026 – Chúc Mừng Năm Mới!" />
+<title>Tết Nguyên Đán 2026 (Bính Ngọ)</title>
+
   <style>
     :root{
       --bg1:#0b1023; --bg2:#1f2858; --accent:#ffd85c; --pink:#ff7ac6; --blue:#71c7ff; --green:#6ef3a9;
@@ -201,7 +204,7 @@
 
   <script>
     /* ====== Countdown đến 00:00:00 01/01/2026 (theo local time) ====== */
-    const target = new Date("2026-01-01T00:00:00");
+    const target = new Date("2026-02-17T00:00:00");
     const el = {
       days: document.getElementById("days"),
       hours: document.getElementById("hours"),
@@ -254,13 +257,15 @@
     setInterval(tick, 250); tick();
 
     /* ====== Random lời chúc ====== */
-    const wishes = [
-      "Chúc năm mới 2026 rực rỡ – sức khỏe dồi dào, vạn sự hanh thông!",
-      "Mở ra chương mới: bình an, thịnh vượng và muôn điều tốt đẹp.",
-      "Thành công gõ cửa, hạnh phúc ngập tràn, niềm vui luôn bên bạn.",
-      "Mỗi ngày là một niềm vui, mỗi bước là một thành tựu!",
-      "Tài lộc dồi dào, tình thân bền chặt, nụ cười luôn nở trên môi."
-    ];
+  
+const wishes = [
+  "Xuân Bính Ngọ 2026 an khang – vạn sự hanh thông, tấn tài tấn lộc!",
+  "Năm mới bình an, gia đình hạnh phúc, công việc thuận buồm xuôi gió!",
+  "Chúc cả nhà đoàn viên, sức khỏe dồi dào, lộc đến nhà – phúc đầy kho!",
+  "Mai vàng nở rộ – chúc bạn khởi đầu rực rỡ, mỗi ngày một thành tựu!",
+  "Tài lộc như ý, vạn điều tốt lành, nụ cười luôn nở trên môi!"
+];
+
     const wishEl = document.getElementById("wish");
     document.getElementById("randomWish").addEventListener("click", ()=>{
       const i = Math.floor(Math.random()*wishes.length);
@@ -291,15 +296,17 @@
         alert("✅ Đã sao chép nội dung chia sẻ!");
       }
     }
-    document.getElementById("shareBtn").addEventListener("click", (e)=>{
-      e.preventDefault();
-      doShare(wishEl.textContent + " #HappyNewYear2026");
-    });
-    document.getElementById("shareBtn2").addEventListener("click", (e)=>{
-      e.preventDefault();
-      const greetingText = document.getElementById("greetingText").textContent;
-      doShare(greetingText + " #HappyNewYear2026");
-    });
+    
+document.getElementById("shareBtn").addEventListener("click", (e)=>{
+  e.preventDefault();
+  doShare(wishEl.textContent + " #Tet2026 #TetBinhNgo #ChucMungNamMoi2026");
+});
+document.getElementById("shareBtn2").addEventListener("click", (e)=>{
+  e.preventDefault();
+  const greetingText = document.getElementById("greetingText").textContent;
+  doShare(greetingText + " #Tet2026 #TetBinhNgo #ChucMungNamMoi2026");
+});
+
 
     /* ====== Bật lại pháo hoa / quay lại đếm ngược ====== */
     document.getElementById("replayFireworks").addEventListener("click", ()=>{
