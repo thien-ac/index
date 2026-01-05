@@ -1,325 +1,282 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Office Hub Pro - Chinese Ultimate v2</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        :root {
-            --primary: #2563eb; --bg: #f8fafc; --sidebar: #0f172a;
-            --text: #1e293b; --white: #ffffff; --accent: #e11d48;
-        }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đếm ngược tới Tết Âm Lịch 2026</title>
+  <meta name="description" content="Đồng hồ đếm ngược tới Tết Nguyên Đán (17/02/2026)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;         /* slate-900 */
+      --card: #111827cc;     /* gray-900/80 */
+      --primary: #ef4444;    /* red-500 */
+      --accent: #f59e0b;     /* amber-500 */
+      --text: #e5e7eb;       /* gray-200 */
+      --muted: #9ca3af;      /* gray-400 */
+    }
 
-        /* Sidebar */
-        .sidebar { width: 280px; background: var(--sidebar); color: white; padding: 20px; overflow-y: auto; flex-shrink: 0; transition: 0.3s; }
-        .sidebar h2 { font-size: 1.2rem; color: #38bdf8; text-align: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .menu-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; margin: 15px 0 5px; display: block; }
-        .menu-btn { width: 100%; background: none; border: none; color: #94a3b8; padding: 12px; text-align: left; cursor: pointer; border-radius: 10px; display: flex; align-items: center; gap: 10px; margin-bottom: 3px; transition: 0.2s; }
-        .menu-btn:hover { background: #1e293b; color: white; }
-        .menu-btn.active { background: var(--primary); color: white; }
+    * { box-sizing: border-box }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 10% 10%, #1f2937 0%, #0f172a 40%, #0b1220 100%),
+        var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
 
-        /* Main Content */
-        .main { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-        .tool-card { background: var(--white); padding: 25px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: none; width: 100%; max-width: 1000px; }
-        .tool-card.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .container {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
 
-        /* 214 Radicals Grid */
-        .rad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 12px; margin-top: 15px; }
-        .rad-item { background: #fff; border: 1px solid #e2e8f0; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border-radius: 15px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .rad-item:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
-        .rad-item .char { font-size: 1.8rem; font-family: "KaiTi", "BiauKai", serif; color: var(--primary); }
-        .rad-item .pinyin { font-size: 0.7rem; font-weight: bold; color: #64748b; }
+    .card {
+      width: min(960px, 100%);
+      background: linear-gradient(180deg, #111827fa 0%, #0b1220f0 100%);
+      border: 1px solid #1f2937;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow:
+        0 40px 120px rgba(239, 68, 68, .12),
+        inset 0 0 0 1px rgba(255,255,255,.04);
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* Pinyin Chart */
-        .pinyin-scroll { width: 100%; overflow-x: auto; border-radius: 15px; border: 1px solid #e2e8f0; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; background: white; white-space: nowrap; }
-        th, td { border: 1px solid #f1f5f9; padding: 12px 15px; text-align: center; }
-        th { background: #f8fafc; color: var(--primary); font-size: 0.8rem; }
-        td.cell:hover { background: #dbeafe; cursor: pointer; font-weight: bold; color: var(--primary); }
+    /* Pháo hoa nhẹ nhàng */
+    .card::before, .card::after {
+      content: "";
+      position: absolute;
+      inset: -80px -80px auto auto;
+      width: 240px; height: 240px;
+      background:
+        radial-gradient(5px 5px at 50% 50%, var(--accent) 40%, transparent 41%) repeat;
+      background-size: 24px 24px;
+      opacity: .08;
+      transform: rotate(18deg);
+      filter: drop-shadow(0 0 12px rgba(245, 158, 11, .8));
+      pointer-events: none;
+    }
+    .card::after {
+      inset: auto auto -80px -80px;
+      transform: rotate(-24deg);
+    }
 
-        /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 40px; border-radius: 30px; max-width: 500px; width: 90%; text-align: center; position: relative; }
-        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
+    .heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .heading .emoji { font-size: 1.5rem }
+    .title {
+      font-size: clamp(1.25rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-bottom: 20px;
+    }
 
-        /* Utilities */
-        .btn-green { background: #10b981; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; }
-        button { border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; color: white; background: var(--primary); transition: 0.2s; }
-        button:hover { opacity: 0.9; }
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 14px;
+    }
+    .box {
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 16px 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(600px 240px at 50% -200px, rgba(239,68,68,.22), transparent 60%);
+      opacity: .9;
+      pointer-events: none;
+    }
+    .value {
+      font-size: clamp(2rem, 6vw, 3.25rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      text-shadow: 0 10px 30px rgba(239,68,68,.25);
+    }
+    .label {
+      margin-top: 6px;
+      font-size: .9rem;
+      color: var(--muted);
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
 
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; left: -280px; top: 0; bottom: 0; z-index: 10000; }
-            .sidebar.open { left: 0; }
-            .main { padding: 15px; }
-        }
-    </style>
+    .cta {
+      margin-top: 26px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid #1f2937;
+      background: #121a2a;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .btn.primary {
+      background: linear-gradient(90deg, #ef4444, #f59e0b);
+      border: none;
+      color: #0b1220;
+      box-shadow: 0 10px 30px rgba(239, 68, 68, .35);
+    }
+    .btn:hover { transform: translateY(-1px) }
+    .note {
+      margin-top: 10px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 560px) {
+      .countdown { grid-template-columns: repeat(2, 1fr) }
+    }
+  </style>
 </head>
 <body>
+  <main class="container">
+    <section class="card" aria-label="Đếm ngược Tết 2026">
+      <div class="heading">
+        <div class="emoji">🧧🎆</div>
+        <h1 class="title">Đếm ngược tới Tết Nguyên Đán 2026</h1>
+      </div>
+      <p class="subtitle">Thời khắc giao thừa (Giao thừa) vào <strong>00:00, 17/02/2026</strong> — giờ địa phương Việt Nam (GMT+7). [1](https://www.myvietnamvisa.com/vietnamese-lunar-new-year-dates-animals-of-the-zodiac.html)[2](https://fahasasg.com.vn/en/when-is-tet-2026/)</p>
 
-    <div class="sidebar" id="sidebar">
-        <h2>OFFICE HUB PRO</h2>
-        <span class="menu-label">Học tập</span>
-        <button class="menu-btn active" onclick="nav('radicals', this)">⛩️ 214 Bộ Thủ</button>
-        <button class="menu-btn" onclick="nav('pinyin', this)">🗣️ Bảng Ghép Pinyin</button>
-        
-        <span class="menu-label">Cá nhân</span>
-        <button class="menu-btn" onclick="nav('todo', this)">📝 Việc cần làm</button>
-        <button class="menu-btn" onclick="nav('pomodoro', this)">⏱️ Pomodoro</button>
-        <button class="menu-btn" onclick="nav('notes', this)">📓 Ghi chú</button>
-        
-        <span class="menu-label">Tiện ích</span>
-        <button class="menu-btn" onclick="nav('currency', this)">💱 Đổi ngoại tệ</button>
-    </div>
-
-    <div class="main">
-        <section id="radicals" class="tool-card active">
-            <h3>⛩️ Trọn bộ 214 Bộ Thủ Tiếng Trung</h3>
-            <p style="color: #64748b; font-size: 0.9rem;">Bấm vào từng bộ để xem chi tiết Pinyin, Hán Việt và ý nghĩa.</p>
-            <div class="rad-grid" id="radGrid"></div>
-        </section>
-
-        <section id="pinyin" class="tool-card">
-            <h3>🗣️ Bảng Ghép Âm Pinyin Toàn Tập</h3>
-            <div class="pinyin-scroll">
-                <table id="pTable">
-                    <thead><tr id="pHead"></tr></thead>
-                    <tbody id="pBody"></tbody>
-                </table>
-            </div>
-            <div id="pDetail" style="display:none; margin-top:20px; background:#eff6ff; padding:20px; border-radius:20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span id="pChar" style="font-size:3.5rem; font-weight:bold; color:var(--primary);"></span>
-                    <button onclick="speakPinyin()">🔊 Nghe Phát Âm</button>
-                </div>
-                <p><strong>Khẩu hình:</strong> <span id="pMouth"></span></p>
-                <p><strong>Vị trí lưỡi:</strong> <span id="pTongue"></span></p>
-            </div>
-        </section>
-
-        <section id="todo" class="tool-card">
-            <h3>📝 Danh sách việc cần làm</h3>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="todoIn" placeholder="Hôm nay bạn cần làm gì?">
-                <button onclick="addTodo()" style="width:100px;">Thêm</button>
-            </div>
-            <div id="todoList" style="margin-top:20px;"></div>
-            <button onclick="exportExcel()" class="btn-green" style="margin-top:20px;">📥 Xuất Excel</button>
-        </section>
-
-        <section id="pomodoro" class="tool-card">
-            <h3>⏱️ Đồng hồ Pomodoro</h3>
-            <div style="font-size:6rem; text-align:center; font-weight:800; color:var(--sidebar);" id="timer">25:00</div>
-            <div style="display:flex; gap:15px; justify-content:center;">
-                <button onclick="toggleTimer()" id="tBtn" style="padding:15px 40px; font-size:1.2rem;">Bắt đầu</button>
-                <button onclick="resetTimer()" style="background:#64748b;">Reset</button>
-            </div>
-        </section>
-
-        <section id="notes" class="tool-card">
-            <h3>📓 Ghi chú cá nhân</h3>
-            <textarea id="noteArea" style="height:400px;" oninput="saveNotes()" placeholder="Ghi chú của bạn sẽ được tự động lưu lại..."></textarea>
-        </section>
-
-        <section id="currency" class="tool-card">
-            <h3>💱 Chuyển đổi ngoại tệ</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                <select id="curFrom"><option value="USD">USD - Đô la Mỹ</option><option value="CNY" selected>CNY - Nhân dân tệ</option><option value="VND">VND - Việt Nam Đồng</option></select>
-                <select id="curTo"><option value="VND" selected>VND - Việt Nam Đồng</option><option value="CNY">CNY - Nhân dân tệ</option><option value="USD">USD - Đô la Mỹ</option></select>
-            </div>
-            <input type="number" id="curAmount" placeholder="Nhập số tiền..." oninput="convert()">
-            <div id="curRes" style="margin-top:20px; font-size:1.5rem; font-weight:bold; color:var(--primary); text-align:center;">Kết quả: 0</div>
-        </section>
-    </div>
-
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="mChar" style="font-size:7rem; color:var(--primary); font-family:'KaiTi';"></div>
-            <h2 id="mViet"></h2>
-            <p id="mPinyin" style="font-size:1.5rem; font-weight:bold; color:#64748b;"></p>
-            <p id="mMean" style="font-size:1.2rem; margin-top:10px;"></p>
-            <div id="mDesc" style="background:#f1f5f9; padding:15px; border-radius:15px; font-style:italic; margin-top:20px; color:var(--accent);"></div>
+      <div class="countdown" role="group" aria-label="Bộ đếm ngược">
+        <div class="box">
+          <div class="value" id="days">—</div>
+          <div class="label">Ngày</div>
         </div>
-    </div>
+        <div class="box">
+          <div class="value" id="hours">—</div>
+          <div class="label">Giờ</div>
+        </div>
+        <div class="box">
+          <div class="value" id="minutes">—</div>
+          <div class="label">Phút</div>
+        </div>
+        <div class="box">
+          <div class="value" id="seconds">—</div>
+          <div class="label">Giây</div>
+        </div>
+      </div>
 
-    <script>
-        // --- DATA BỘ THỦ --- (Đã nén, tự động giải nén khi load)
-        const radData = [
-            ["一","yī","Nhất","Số một","Một vạch ngang"], ["丨","gǔn","Cổn","Nét sổ","Đường thẳng đứng"],
-            ["丶","zhǔ","Chủ","Điểm","Dấu chấm"], ["丿","piě","Phiệt","Nét phẩy","Nét xiên"],
-            ["乙","yǐ","Ất","Vị trí thứ 2","Mầm cây mới mọc"], ["亅","jué","Quyết","Nét móc","Cái móc câu"],
-            ["二","èr","Nhị","Số hai","Hai vạch ngang"], ["亠","tóu","Đầu","Phần trên","Che đậy ở trên"],
-            ["人","rén","Nhân","Con người","Hình người đang đi"], ["儿","ér","Nhân (chân)","Đôi chân","Hình đôi chân"],
-            ["入","rù","Nhập","Vào trong","Hình vật đi vào"], ["八","bā","Bát","Số tám","Hai nét xòe ra"],
-            ["冂","jiōng","Quynh","Vùng biên","Vùng đất trống"], ["冖","mì","Mịch","Trùm lên","Chiếc khăn che"],
-            ["冫","bīng","Băng","Nước đá","Hai giọt nước đông"], ["几","jī","Kỷ","Cái ghế","Cái bàn nhỏ"],
-            ["凵","kǎm","Khảm","Há miệng","Vật đựng rỗng"], ["刀","dāo","Đao","Con dao","Hung khí hình dao"],
-            ["力","lì","Lực","Sức mạnh","Hình cái cày nông nghiệp"], ["勹","bāo","Bao","Bao bọc","Người khom bao bọc"],
-            ["匕","bǐ","Chủy","Cái thìa","Cái muỗng"], ["匚","fāng","Phương","Vật đựng","Cái khay chứa"],
-            ["匸","xì","Hệ","Che đậy","Vật được giấu kín"], ["十","shí","Thập","Số mười","Vạch đứng và ngang"],
-            ["卜","bǔ","Bốc","Xem bói","Vết nứt trên mai rùa"], ["卩","jié","Tiết","Đốt tre","Đốt tre hoặc con dấu"],
-            ["厂","hǎn","Hán","Sườn núi","Vách đá"], ["厶","sī","Khư","Riêng tư","Cái kén tằm"],
-            ["又","yòu","Hựu","Lại lần nữa","Bàn tay làm việc"], ["口","kǒu","Khẩu","Miệng","Hình khoang miệng"],
-            ["土","tǔ","Thổ","Đất","Cây mọc trên đất"], ["士","shì","Sĩ","Kẻ sĩ","Người có học thức"],
-            ["夊","suī","Truy","Đi chậm","Dáng đi chậm rãi"], ["夕","xī","Tịch","Buổi tối","Trăng khuyết"],
-            ["大","dà","Đại","To lớn","Người dang tay"], ["女","nǚ","Nữ","Phụ nữ","Người nữ quỳ gối"],
-            ["子","zǐ","Tử","Con cái","Đứa trẻ quấn tã"], ["宀","mián","Miên","Mái nhà","Mái che có đỉnh"],
-            ["寸","cùn","Thốn","Tấc","Khoảng cách bàn tay"], ["小","xiǎo","Tiểu","Nhỏ bé","Ba nét vụn"],
-            ["尢","wāng","Uông","Yếu đuối","Người có chân què"], ["尸","shī","Thi","Xác chết","Người nằm bất động"],
-            ["屮","chè","Triệt","Mầm non","Cỏ mới mọc"], ["山","shān","Sơn","Núi","Ba ngọn núi"],
-            ["川","chuān","Xuyên","Sông","Dòng nước chảy"], ["工","gōng","Công","Công việc","Cái thước thợ"],
-            ["己","jǐ","Kỷ","Cái mình","Dây uốn lượn"], ["巾","jīn","Cân","Khăn","Khăn treo"],
-            ["干","gān","Can","Can hệ","Cái khiên"], ["幺","yāo","Yêu","Nhỏ nhắn","Sợi chỉ nhỏ"],
-            ["广","guǎng","Quảng","Rộng lớn","Nhà tựa vách đá"], ["廴","yǐn","Dẫn","Đi dài","Bước đi dài"],
-            ["廾","gǒng","Củng","Chắp tay","Hai tay dâng lên"], ["弋","yì","Dặc","Bắn cung","Cọc gỗ buộc dây"],
-            ["弓","gōng","Cung","Cây cung","Hình cái cung"], ["彐","jì","Ký","Mõm lợn","Cái đầu con vật"],
-            ["彡","shān","衫","Lông tóc","Vệt trang trí"], ["彳","chì","Xích","Bước chân","Bước chân trái"],
-            ["心","xīn","Tâm","Tim","Quả tim người"], ["戈","gē","Qua","Cái mác","Binh khí dài"],
-            ["戶","hù","Hộ","Cửa","Cánh cửa một cánh"], ["手","shǒu","Thủ","Tay","Bàn tay năm ngón"],
-            ["支","zhī","Chi","Cành cây","Tay cầm cành cây"], ["攴","pū","Phộc","Đánh nhẹ","Tay cầm gậy"],
-            ["文","wén","Văn","Chữ viết","Hình xăm trên người"], ["斗","dǒu","Đẩu","Cái đấu","Dụng cụ đong thóc"],
-            ["斤","jīn","Cân","Cái rìu","Cái rìu chặt cây"], ["方","fāng","Phương","Hướng","Hai thuyền ghép lại"],
-            ["无","wú","Vô","Không có","Người nhảy múa"], ["日","rì","Nhật","Mặt trời","Hình tròn có chấm"],
-            ["曰","yuē","Viết","Nói rằng","Miệng đang nói"], ["月","yuè","Nguyệt","Mặt trăng","Trăng khuyết"],
-            ["木","mù","Mộc","Cây","Thân cây và cành"], ["欠","qiàn","Khiếm","Thiếu thốn","Người há miệng thở"],
-            ["止","zhǐ","Chỉ","Dừng lại","Dấu chân dừng"], ["歹","dǎi","Đãi","Xấu xa","Khung xương tàn"],
-            ["殳","shū","Thù","Binh khí","Tay cầm gậy dài"], ["毋","wú","Vô","Đừng","Cấm đoán"],
-            ["比","bǐ","Tỷ","So sánh","Hai người đứng cạnh"], ["毛","máo","Mao","Lông","Lông động vật"],
-            ["氏","shì","Thị","Họ","Gốc rễ cây"], ["气","qì","Khí","Hơi nước","Luồng mây bay"],
-            ["水","shuǐ","Thủy","Nước","Dòng nước chảy"], ["火","huǒ","Hỏa","Lửa","Ngọn lửa bùng"],
-            ["爪","zhǎo","Trảo","Móng vuốt","Bàn chân chim"], ["父","fù","Phụ","Cha","Tay cầm roi dạy"],
-            ["爻","yáo","Hào","Hào quẻ","Nét đan chéo"], ["爿","qiáng","Tường","Mảnh gỗ","Cái giường gỗ"],
-            ["片","piàn","Phiến","Mảnh nhỏ","Nửa thân cây"], ["牙","yá","Nha","Răng","Răng nanh đan"],
-            ["牛","niú","Ngưu","Con trâu","Đầu trâu có sừng"], ["犬","quǎn","Khuyển","Con chó","Con chó đứng"]
-            // Hệ thống sẽ hiển thị 100 bộ tiêu biểu nhất để tránh quá tải DOM, bạn có thể thêm tiếp vào mảng này.
-        ];
+      <div class="cta">
+        <button class="btn primary" id="share">Chia sẻ</button>
+        <button class="btn" id="addCalendar">Thêm vào lịch (ICS)</button>
+      </div>
 
-        // --- PINYIN DATA ---
-        const sm = ["", "b", "p", "m", "f", "d", "t", "n", "l", "g", "k", "h", "j", "q", "x", "zh", "ch", "sh", "r", "z", "c", "s"];
-        const vm = ["a", "o", "e", "i", "u", "ü", "ai", "ei", "ui", "ao", "ou", "iu", "ie", "üe", "er", "an", "en", "in", "un", "vn", "ang", "eng", "ing", "ong"];
+      <p class="note">Mẹo: Ghim trang này vào màn hình chính để xem bộ đếm ngược nhanh chóng.</p>
+    </section>
+  </main>
 
-        // --- INITIALIZATION ---
-        function init() {
-            // Render Radicals
-            const grid = document.getElementById('radGrid');
-            radData.forEach((r, i) => {
-                const div = document.createElement('div');
-                div.className = 'rad-item';
-                div.innerHTML = `<span class="char">${r[0]}</span><span class="pinyin">${r[1]}</span>`;
-                div.onclick = () => showRad(r);
-                grid.appendChild(div);
-            });
+  <script>
+    // Thiết lập mốc thời gian Tết 2026 theo giờ VN (GMT+7)
+    // Dùng chuỗi ISO có offset +07:00 để tránh lệch múi giờ
+    const tetVN = new Date('2026-02-17T00:00:00+07:00').getTime();
 
-            // Render Pinyin Table
-            const head = document.getElementById('pHead');
-            const body = document.getElementById('pBody');
-            head.innerHTML = '<th>SM \\ VM</th>' + vm.map(v => `<th>${v}</th>`).join('');
-            
-            sm.slice(1).forEach(s => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="font-weight:bold; background:#f8fafc;">${s}</td>` + 
-                    vm.map(v => `<td class="cell" onclick="showP('${s}${v}')">${s}${v}</td>`).join('');
-                body.appendChild(tr);
-            });
+    const $ = (id) => document.getElementById(id);
+    const daysEl = $('days'), hoursEl = $('hours'),
+          minutesEl = $('minutes'), secondsEl = $('seconds');
+
+    function updateCountdown() {
+      const now = Date.now();
+      let diff = tetVN - now;
+
+      if (diff <= 0) {
+        daysEl.textContent = '0';
+        hoursEl.textContent = '0';
+        minutesEl.textContent = '0';
+        secondsEl.textContent = '0';
+        clearInterval(timer);
+        document.title = 'Chúc mừng Năm Mới! 🧧🎉';
+        return;
+      }
+
+      const sec = Math.floor(diff / 1000);
+      const d = Math.floor(sec / (60 * 60 * 24));
+      const h = Math.floor((sec % (60 * 60 * 24)) / (60 * 60));
+      const m = Math.floor((sec % (60 * 60)) / 60);
+      const s = Math.floor(sec % 60);
+
+      daysEl.textContent = String(d);
+      hoursEl.textContent = String(h).padStart(2, '0');
+      minutesEl.textContent = String(m).padStart(2, '0');
+      secondsEl.textContent = String(s).padStart(2, '0');
+    }
+
+    const timer = setInterval(updateCountdown, 250);
+    updateCountdown();
+
+    // Chia sẻ nhanh (Web Share API, nếu hỗ trợ)
+    document.getElementById('share').addEventListener('click', async () => {
+      const text = 'Đếm ngược tới Tết Nguyên Đán 2026 – cùng xem còn bao lâu tới giao thừa!';
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: document.title, text, url: location.href });
+        } else {
+          await navigator.clipboard.writeText(location.href);
+          alert('Đã sao chép liên kết vào clipboard!');
         }
+      } catch (e) { console.log(e); }
+    });
 
-        // --- NAVIGATION ---
-        function nav(id, btn) {
-            document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
-        }
-
-        // --- MODAL & DETAIL ---
-        function showRad(r) {
-            const m = document.getElementById('modal');
-            document.getElementById('mChar').innerText = r[0];
-            document.getElementById('mViet').innerText = "Bộ " + r[2];
-            document.getElementById('mPinyin').innerText = r[1];
-            document.getElementById('mMean').innerText = "Ý nghĩa: " + r[3];
-            document.getElementById('mDesc').innerText = "Tượng hình: " + r[4];
-            m.style.display = 'flex';
-        }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-        function showP(p) {
-            document.getElementById('pDetail').style.display = 'block';
-            document.getElementById('pChar').innerText = p;
-            document.getElementById('pMouth').innerText = "Mở rộng vừa phải, môi thả lỏng.";
-            document.getElementById('pTongue').innerText = "Đặt ở vị trí tự nhiên, đầu lưỡi chạm hàm dưới.";
-            window.currentP = p;
-        }
-
-        function speakPinyin() {
-            const m = new SpeechSynthesisUtterance(window.currentP);
-            m.lang = 'zh-CN';
-            speechSynthesis.speak(m);
-        }
-
-        // --- TODO LOGIC ---
-        let todos = JSON.parse(localStorage.getItem('hub_todos')) || [];
-        function renderTodos() {
-            const list = document.getElementById('todoList');
-            list.innerHTML = todos.map((t, i) => `
-                <div style="display:flex; align-items:center; background:#f8fafc; padding:12px; border-radius:15px; margin-bottom:10px; border:1px solid #e2e8f0;">
-                    <input type="checkbox" ${t.d?'checked':''} onchange="toggleT(${i})" style="width:20px; margin:0">
-                    <span style="flex:1; margin-left:15px; ${t.d?'text-decoration:line-through; color:#94a3b8':''}">${t.v}</span>
-                    <button onclick="delT(${i})" style="background:none; color:#e11d48; padding:0">✕</button>
-                </div>
-            `).join('');
-            localStorage.setItem('hub_todos', JSON.stringify(todos));
-        }
-        function addTodo() {
-            const val = document.getElementById('todoIn').value;
-            if(val) { todos.push({v: val, d: false}); document.getElementById('todoIn').value=''; renderTodos(); }
-        }
-        function toggleT(i) { todos[i].d = !todos[i].d; renderTodos(); }
-        function delT(i) { todos.splice(i, 1); renderTodos(); }
-        function exportExcel() {
-            const ws = XLSX.utils.json_to_sheet(todos);
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Tasks");
-            XLSX.writeFile(wb, "OfficeHub_Tasks.xlsx");
-        }
-
-        // --- POMODORO ---
-        let timer, secs = 1500, active = false;
-        function toggleTimer() {
-            const btn = document.getElementById('tBtn');
-            if(active) { clearInterval(timer); btn.innerText = "Bắt đầu"; }
-            else {
-                timer = setInterval(() => {
-                    secs--;
-                    document.getElementById('timer').innerText = `${Math.floor(secs/60)}:${(secs%60).toString().padStart(2,'0')}`;
-                    if(secs <= 0) { clearInterval(timer); alert("Hết giờ!"); resetTimer(); }
-                }, 1000);
-                btn.innerText = "Tạm dừng";
-            }
-            active = !active;
-        }
-        function resetTimer() { clearInterval(timer); secs = 1500; document.getElementById('timer').innerText = "25:00"; active = false; document.getElementById('tBtn').innerText = "Bắt đầu"; }
-
-        // --- OTHERS ---
-        function saveNotes() { localStorage.setItem('hub_notes', document.getElementById('noteArea').value); }
-        document.getElementById('noteArea').value = localStorage.getItem('hub_notes') || '';
-
-        async function convert() {
-            const amt = document.getElementById('curAmount').value;
-            const from = document.getElementById('curFrom').value;
-            const to = document.getElementById('curTo').value;
-            if(!amt) return;
-            const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
-            const data = await res.json();
-            document.getElementById('curRes').innerText = `Kết quả: ${(amt * data.rates[to]).toLocaleString()} ${to}`;
-        }
-
-        window.onload = init; renderTodos();
-    </script>
+    // Tạo file ICS đơn giản (client-side)
+    document.getElementById('addCalendar').addEventListener('click', () => {
+      const start = '20260217T000000';
+      const end   = '20260217T010000';
+      const tzid  = 'Asia/Ho_Chi_Minh';
+      const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Tet Countdown//VN//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTART;TZID=${tzid}:${start}
+DTEND;TZID=${tzid}:${end}
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'}
+UID:${crypto.randomUUID()}
+SUMMARY:Giao thừa Tết Nguyên Đán 2026
+DESCRIPTION:Chúc mừng năm mới! 🧧🎉
+LOCATION:Việt Nam
+END:VEVENT
+END:VCALENDAR`;
+      const blob = new Blob([ics], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Tet-2026.ics';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
 </body>
 </html>
